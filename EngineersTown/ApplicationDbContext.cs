@@ -17,6 +17,8 @@ namespace EngineersTown.Data
         public DbSet<AttendanceLog> AttendanceLogs { get; set; }
         public DbSet<DailyAttendance> DailyAttendances { get; set; }
         public DbSet<OfficeTiming> OfficeTimings { get; set; }
+        public DbSet<SalaryDefinition> SalaryDefinitions { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

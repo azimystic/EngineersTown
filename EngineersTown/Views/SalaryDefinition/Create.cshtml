@@ -1,0 +1,228 @@
+﻿@model EngineersTown.Models.ViewModels.SalaryDefinitionViewModel
+@{
+    ViewData["Title"] = "Create Salary Definition";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-plus-circle"></i>
+                        Create Salary Definition - @ViewBag.EmployeeTypeDescription
+                    </h3>
+                    <div class="card-tools">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <strong>Employee:</strong> @Model.EmployeeName |
+                                <strong>Department:</strong> @Model.DepartmentName |
+                                <strong>Designation:</strong> @Model.DesignationName
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Create" method="post">
+                        <input asp-for="EmployeeId" type="hidden" />
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Salary Components Section -->
+                                <div class="card">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">Salary Components</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        @if (Model.EmployeeType == "001") // Regular Employee
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="BasicSalary" class="form-label"></label>
+                                                        <input asp-for="BasicSalary" class="form-control" type="number" step="0.01" />
+                                                        <span asp-validation-for="BasicSalary" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="HouseRentAllowance" class="form-label"></label>
+                                                        <input asp-for="HouseRentAllowance" class="form-control" type="number" step="0.01" />
+                                                        <span asp-validation-for="HouseRentAllowance" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="ConveyanceAllowance" class="form-label"></label>
+                                                        <input asp-for="ConveyanceAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="MedicalAllowance" class="form-label"></label>
+                                                        <input asp-for="MedicalAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="GunAllowance" class="form-label"></label>
+                                                        <input asp-for="GunAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="SupplementaryAllowance" class="form-label"></label>
+                                                        <input asp-for="SupplementaryAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="WashAllowance" class="form-label"></label>
+                                                        <input asp-for="WashAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="AdhocAllowance" class="form-label"></label>
+                                                        <input asp-for="AdhocAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="SRAAllowance" class="form-label"></label>
+                                                        <input asp-for="SRAAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (Model.EmployeeType == "002") // Contract Employee
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="LumpSumAmount" class="form-label"></label>
+                                                        <input asp-for="LumpSumAmount" class="form-control" type="number" step="0.01" />
+                                                        <span asp-validation-for="LumpSumAmount" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="HouseRentAll" class="form-label"></label>
+                                                        <input asp-for="HouseRentAll" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="ConveyanceAll" class="form-label"></label>
+                                                        <input asp-for="ConveyanceAll" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="GunAll" class="form-label"></label>
+                                                        <input asp-for="GunAll" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="MiscAllowance" class="form-label"></label>
+                                                        <input asp-for="MiscAllowance" class="form-control" type="number" step="0.01" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else if (Model.EmployeeType == "003") // Daily Wages
+                                        {
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-3">
+                                                        <label asp-for="DailyWage" class="form-label"></label>
+                                                        <input asp-for="DailyWage" class="form-control" type="number" step="0.01" />
+                                                        <span asp-validation-for="DailyWage" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <!-- Deductions Section -->
+                                <div class="card">
+                                    <div class="card-header bg-warning">
+                                        <h5 class="mb-0">Deductions</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        @if (Model.EmployeeType != "003") // Not Daily Wages
+                                        {
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">EPF (Auto-calculated)</label>
+                                                <input type="text" class="form-control" value="8.33% of Basic" readonly />
+                                                <small class="text-muted">Automatically calculated for regular employees</small>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Income Tax (Auto-calculated)</label>
+                                                <input type="text" class="form-control" value="5% of Gross" readonly />
+                                                <small class="text-muted">Automatically calculated</small>
+                                            </div>
+                                        }
+
+                                        <div class="form-group mb-3">
+                                            <label asp-for="EOBIDeduction" class="form-label"></label>
+                                            <input asp-for="EOBIDeduction" class="form-control" type="number" step="0.01" />
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label asp-for="MessDeduction" class="form-label"></label>
+                                            <input asp-for="MessDeduction" class="form-control" type="number" step="0.01" />
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label asp-for="OtherDeductions" class="form-label"></label>
+                                            <input asp-for="OtherDeductions" class="form-control" type="number" step="0.01" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-success me-2">
+                                    <i class="fas fa-save"></i> Create Salary Definition
+                                </button>
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

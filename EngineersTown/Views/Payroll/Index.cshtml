@@ -1,0 +1,147 @@
+﻿@model EngineersTown.Models.ViewModels.PayrollReportViewModel
+
+@{
+    ViewData["Title"] = "Payroll Report";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Payroll Report</h3>
+            </div>
+            <div class="card-body">
+                <!-- Filters -->
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="payrollMonth">Payroll Month</label>
+                                <input type="month" class="form-control" id="payrollMonth" name="payrollMonth"
+                                       value="@Model.PayrollMonth?.ToString("yyyy-MM")" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="departmentId">Department</label>
+                                <select class="form-control" id="departmentId" name="departmentId">
+                                    @foreach (var item in Model.Departments)
+                                    {
+                                        <option value="@item.Value" selected="@(item.Value == Model.DepartmentId?.ToString())">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-primary form-control">Generate Report</button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <a href="@Url.Action("PrintReport", new { payrollMonth = Model.PayrollMonth?.ToString("yyyy-MM"), departmentId = Model.DepartmentId })"
+                                   class="btn btn-success form-control" target="_blank">
+                                    Print Report
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Summary -->
+                @if (Model.Summary != null)
+                {
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="info-box bg-info">
+                                <div class="info-box-content">
+                                    <h4>Payroll Summary - @Model.PayrollMonth?.ToString("MMMM yyyy")</h4>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <strong>Total Employees:</strong> @Model.Summary.TotalEmployees
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Total Gross:</strong> @Model.Summary.TotalGross.ToString("C")
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Total Deductions:</strong> @Model.Summary.TotalDeductions.ToString("C")
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>Total Net Payable:</strong> @Model.Summary.TotalNet.ToString("C")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Department Reports -->
+                @if (Model.DepartmentReports != null && Model.DepartmentReports.Any())
+                {
+                    foreach (var department in Model.DepartmentReports)
+                    {
+                        <div class="card mb-4">
+                            <div class="card-header bg-secondary">
+                                <h5 class="card-title">@department.DepartmentName</h5>
+                                <div class="card-tools">
+                                    <span class="badge bg-light">Gross: @department.DepartmentGrossTotal.ToString("C")</span>
+                                    <span class="badge bg-light">Deductions: @department.DepartmentDeductionsTotal.ToString("C")</span>
+                                    <span class="badge bg-light">Net: @department.DepartmentNetTotal.ToString("C")</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee</th>
+                                                <th>Type</th>
+                                                <th>Designation</th>
+                                                <th>Working Days</th>
+                                                <th>Present</th>
+                                                <th>Absent</th>
+                                                <th>Basic Salary</th>
+                                                <th>Allowances</th>
+                                                <th>Gross Salary</th>
+                                                <th>Deductions</th>
+                                                <th>Net Payable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var employee in department.Employees)
+                                            {
+                                                <tr>
+                                                    <td>@employee.EmployeeName</td>
+                                                    <td>@employee.EmployeeType</td>
+                                                    <td>@employee.DesignationName</td>
+                                                    <td>@employee.TotalWorkingDays</td>
+                                                    <td>@employee.PresentDays</td>
+                                                    <td>@employee.AbsentDays</td>
+                                                    <td>@employee.BasicSalary.ToString("C")</td>
+                                                    <td>@employee.Allowances.ToString("C")</td>
+                                                    <td>@employee.GrossSalary.ToString("C")</td>
+                                                    <td>@employee.TotalDeductions.ToString("C")</td>
+                                                    <td><strong>@employee.NetPayable.ToString("C")</strong></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <h5>No payroll data found</h5>
+                        <p>Select a month and department to generate payroll report.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

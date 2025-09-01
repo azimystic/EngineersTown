@@ -1,0 +1,160 @@
+﻿@model EngineersTown.Models.ViewModels.PayrollReportViewModel
+
+@{
+    ViewData["Title"] = "Payroll Report - " + Model.PayrollMonth?.ToString("MMMM yyyy");
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .summary {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+
+        .department-header {
+            background-color: #e9ecef;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>EngineersTown - Payroll Report</h1>
+        <h3>@Model.PayrollMonth?.ToString("MMMM yyyy")</h3>
+        @if (Model.DepartmentId.HasValue)
+        {
+            <p>Department: @Model.Departments.FirstOrDefault(d => d.Value == Model.DepartmentId.ToString())?.Text</p>
+        }
+        <p>Generated on: @DateTime.Now.ToString("MMMM dd, yyyy hh:mm tt")</p>
+    </div>
+
+    <!-- Summary -->
+    @if (Model.Summary != null)
+    {
+        <div class="summary">
+            <h4>Payroll Summary</h4>
+            <table>
+                <tr>
+                    <td><strong>Total Employees:</strong></td>
+                    <td>@Model.Summary.TotalEmployees</td>
+                    <td><strong>Total Gross Salary:</strong></td>
+                    <td>@Model.Summary.TotalGross.ToString("C")</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Deductions:</strong></td>
+                    <td>@Model.Summary.TotalDeductions.ToString("C")</td>
+                    <td><strong>Total Net Payable:</strong></td>
+                    <td>@Model.Summary.TotalNet.ToString("C")</td>
+                </tr>
+            </table>
+        </div>
+    }
+
+    <!-- Department Reports -->
+    @if (Model.DepartmentReports != null && Model.DepartmentReports.Any())
+    {
+        foreach (var department in Model.DepartmentReports)
+        {
+            <div class="department-header">
+                <h3>@department.DepartmentName</h3>
+                <p>
+                    Department Total - Gross: @department.DepartmentGrossTotal.ToString("C") |
+                    Deductions: @department.DepartmentDeductionsTotal.ToString("C") |
+                    Net: @department.DepartmentNetTotal.ToString("C")
+                </p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Type</th>
+                        <th>Designation</th>
+                        <th>Working Days</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Basic Salary</th>
+                        <th>Allowances</th>
+                        <th>Gross Salary</th>
+                        <th>Deductions</th>
+                        <th>Net Payable</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in department.Employees)
+                    {
+                        <tr>
+                            <td>@employee.EmployeeName</td>
+                            <td>@employee.EmployeeType</td>
+                            <td>@employee.DesignationName</td>
+                            <td>@employee.TotalWorkingDays</td>
+                            <td>@employee.PresentDays</td>
+                            <td>@employee.AbsentDays</td>
+                            <td class="text-right">@employee.BasicSalary.ToString("C")</td>
+                            <td class="text-right">@employee.Allowances.ToString("C")</td>
+                            <td class="text-right">@employee.GrossSalary.ToString("C")</td>
+                            <td class="text-right">@employee.TotalDeductions.ToString("C")</td>
+                            <td class="text-right"><strong>@employee.NetPayable.ToString("C")</strong></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+
+    <div class="footer">
+        <hr />
+        <p>This is a computer-generated report. No signature is required.</p>
+        <p>Page 1 of 1</p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
