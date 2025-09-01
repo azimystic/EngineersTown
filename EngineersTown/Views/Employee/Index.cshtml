@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Employee>
+
+<h2>Employees</h2>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>ZkedID</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.ZkedID</td>
+                <td>@item.Department.Name</td>
+                <td>@item.Designation.Name</td>
+                <td>@(item.Type == "001" ? "Regular" : item.Type == "002" ? "Contract" : "Daily Wager")</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

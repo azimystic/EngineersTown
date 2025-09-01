@@ -1,0 +1,267 @@
+﻿@model EngineersTown.Models.ViewModels.AttendanceViewModel
+@{
+    ViewData["Title"] = "Attendance Report";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-calendar-check"></i>
+                        Daily Attendance Report
+                    </h3>
+                </div>
+
+                <div class="card-body">
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @ViewBag.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Filters -->
+                    <form method="get" class="mb-4">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date"
+                                       class="form-control"
+                                       id="date"
+                                       name="date"
+                                       value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="departmentId" class="form-label">Department</label>
+                                <select class="form-select" id="departmentId" name="departmentId">
+                                    @foreach (var dept in Model.Departments)
+                                    {
+                                        <option value="@dept.Value" selected="@(dept.Value == Model.SelectedDepartmentId?.ToString())">
+                                            @dept.Text
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Filter
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <form asp-action="ProcessAttendance" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-success" onclick="return confirm('Process attendance for today?')">
+                                        <i class="fas fa-sync"></i> Process
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="info-box bg-success">
+                                        <span class="info-box-icon"><i class="fas fa-user-check"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Present</span>
+                                            <span class="info-box-number">
+                                                @Model.EmployeeAttendances.Count(e => e.Status == "Present")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-danger">
+                                        <span class="info-box-icon"><i class="fas fa-user-times"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Absent</span>
+                                            <span class="info-box-number">
+                                                @Model.EmployeeAttendances.Count(e => e.Status == "Absent")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-warning">
+                                        <span class="info-box-icon"><i class="fas fa-clock"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Late</span>
+                                            <span class="info-box-number">
+                                                @Model.EmployeeAttendances.Count(e => e.Status == "Late")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-box bg-info">
+                                        <span class="info-box-icon"><i class="fas fa-users"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Total</span>
+                                            <span class="info-box-number">@Model.EmployeeAttendances.Count</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="attendanceTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Sr#</th>
+                                    <th>Employee Name</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Time In</th>
+                                    <th>Time Out</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.EmployeeAttendances.Any())
+                                {
+                                    @for (int i = 0; i < Model.EmployeeAttendances.Count; i++)
+                                    {
+                                        var employee = Model.EmployeeAttendances[i];
+                                        var rowClass = employee.Status switch
+                                        {
+                                            "Present" => "table-success",
+                                            "Absent" => "table-danger",
+                                            "Late" => "table-warning",
+                                            _ => ""
+                                        };
+
+                                        <tr class="@rowClass">
+                                            <td>@(i + 1)</td>
+                                            <td>@employee.EmployeeName</td>
+                                            <td>@employee.DepartmentName</td>
+                                            <td>@employee.DesignationName</td>
+                                            <td>@employee.TimeIn</td>
+                                            <td>@employee.TimeOut</td>
+                                            <td>
+                                                <span class="badge @(employee.Status switch
+                                                      {
+                                                          "Present" => "bg-success",
+                                                          "Absent" => "bg-danger",
+                                                          "Late" => "bg-warning text-dark",
+                                                          _ => "bg-secondary"
+                                                      })">
+                                            @employee.StatusDisplay
+                                        </span>
+                                    </td>
+                                </tr>
+                                                                }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center">No employees found</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable if you have it included
+            if (typeof $.fn.DataTable !== 'undefined') {
+                $('#attendanceTable').DataTable({
+                    "pageLength": 25,
+                    "order": [[1, "asc"]],
+                    "columnDefs": [
+                        { "orderable": false, "targets": 0 }
+                    ]
+                });
+            }
+
+            // Auto-refresh functionality (optional)
+            // Refresh every 5 minutes
+            /*
+            setInterval(function() {
+                if (confirm('Refresh attendance data?')) {
+                    location.reload();
+                }
+            }, 300000); // 5 minutes
+            */
+        });
+    </script>
+
+    <style>
+        .info-box {
+            display: block;
+            min-height: 90px;
+            background: #fff;
+            width: 100%;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            border-radius: 2px;
+            margin-bottom: 15px;
+        }
+
+        .info-box-icon {
+            border-top-left-radius: 2px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 2px;
+            display: block;
+            float: left;
+            height: 90px;
+            width: 90px;
+            text-align: center;
+            font-size: 45px;
+            line-height: 90px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .info-box-content {
+            padding: 5px 10px;
+            margin-left: 90px;
+        }
+
+        .info-box-text {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .info-box-number {
+            display: block;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .bg-success { background-color: #28a745!important; color: white; }
+        .bg-danger { background-color: #dc3545!important; color: white; }
+        .bg-warning { background-color: #ffc107!important; color: #212529; }
+        .bg-info { background-color: #17a2b8!important; color: white; }
+    </style>
+}
