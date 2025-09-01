@@ -65,13 +65,8 @@ namespace EngineersTown.Controllers
                     .OrderBy(e => e.Name)
                     .ToListAsync();
 
-                var model = new SalaryCreateViewModel
-                {
-                    Employees = new SelectList(employees, "Id", "Name"),
-                    SalaryDefinition = new SalaryDefinitionViewModel()
-                };
-
-                return View(model);
+                ViewBag.Employees = new SelectList(employees, "Id", "Name");
+                return View();
             }
             catch (Exception ex)
             {
@@ -80,7 +75,6 @@ namespace EngineersTown.Controllers
                 return RedirectToAction("Index");
             }
         }
-
 
         // POST: SalaryDefinition/Create
         [HttpPost]

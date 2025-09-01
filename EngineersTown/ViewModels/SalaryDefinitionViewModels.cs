@@ -44,16 +44,16 @@ namespace EngineersTown.Models.ViewModels
         [Display(Name = "Lump Sum Amount")]
         public decimal? LumpSumAmount { get; set; }
 
-        [Display(Name = "House Rent Allowance")]
+        [Display(Name = "House Rent (All)")]
         public decimal? HouseRentAll { get; set; }
 
-        [Display(Name = "Conveyance Allowance")]
+        [Display(Name = "Conveyance (All)")]
         public decimal? ConveyanceAll { get; set; }
 
-        [Display(Name = "Gun Allowance")]
+        [Display(Name = "Gun (All)")]
         public decimal? GunAll { get; set; }
 
-        [Display(Name = "Miscellaneous Allowance")]
+        [Display(Name = "Misc Allowance")]
         public decimal? MiscAllowance { get; set; }
 
         // Daily Wages Fields
@@ -64,10 +64,10 @@ namespace EngineersTown.Models.ViewModels
         [Display(Name = "EPF Deduction")]
         public decimal? EPFDeduction { get; set; }
 
-        [Display(Name = "Income Tax Deduction")]
+        [Display(Name = "Income Tax")]
         public decimal? IncomeTaxDeduction { get; set; }
 
-        [Display(Name = "EOBI Deduction")]
+        [Display(Name = "EOBI")]
         public decimal? EOBIDeduction { get; set; }
 
         [Display(Name = "Mess Deduction")]
@@ -76,14 +76,71 @@ namespace EngineersTown.Models.ViewModels
         [Display(Name = "Other Deductions")]
         public decimal? OtherDeductions { get; set; }
 
-        // Calculated
         public decimal GrossSalary { get; set; }
         public decimal TotalDeductions { get; set; }
         public decimal NetSalary { get; set; }
     }
-    public class SalaryCreateViewModel
+
+    public class SalarySearchViewModel
     {
-        public SelectList Employees { get; set; }
-        public SalaryDefinitionViewModel SalaryDefinition { get; set; }
+        public string? SearchTerm { get; set; }
+        public int? DepartmentId { get; set; }
+        public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
+        public List<SalaryDefinitionViewModel> Employees { get; set; } = new List<SalaryDefinitionViewModel>();
+    }
+
+    public class PayrollReportViewModel
+    {
+        public DateTime PayrollMonth { get; set; } = DateTime.Today;
+        public int? DepartmentId { get; set; }
+        public List<SelectListItem> Departments { get; set; } = new List<SelectListItem>();
+        public List<PayrollDepartmentDto> DepartmentReports { get; set; } = new List<PayrollDepartmentDto>();
+        public PayrollSummaryDto Summary { get; set; } = new PayrollSummaryDto();
+    }
+
+    public class PayrollDepartmentDto
+    {
+        public string DepartmentName { get; set; } = string.Empty;
+        public List<PayrollEmployeeDto> Employees { get; set; } = new List<PayrollEmployeeDto>();
+        public decimal DepartmentGrossTotal { get; set; }
+        public decimal DepartmentDeductionsTotal { get; set; }
+        public decimal DepartmentNetTotal { get; set; }
+    }
+
+    public class PayrollEmployeeDto
+    {
+        public string EmployeeName { get; set; } = string.Empty;
+        public string EmployeeType { get; set; } = string.Empty;
+        public string DesignationName { get; set; } = string.Empty;
+
+        // Salary Components
+        public decimal BasicSalary { get; set; }
+        public decimal Allowances { get; set; }
+        public decimal GrossSalary { get; set; }
+
+        // Deductions
+        public decimal EPFDeduction { get; set; }
+        public decimal IncomeTaxDeduction { get; set; }
+        public decimal EOBIDeduction { get; set; }
+        public decimal MessDeduction { get; set; }
+        public decimal OtherDeductions { get; set; }
+        public decimal AttendanceDeduction { get; set; }
+
+        // Attendance Info
+        public int TotalWorkingDays { get; set; }
+        public int PresentDays { get; set; }
+        public int AbsentDays { get; set; }
+        public int LateDays { get; set; }
+
+        public decimal TotalDeductions { get; set; }
+        public decimal NetPayable { get; set; }
+    }
+
+    public class PayrollSummaryDto
+    {
+        public decimal TotalGross { get; set; }
+        public decimal TotalDeductions { get; set; }
+        public decimal TotalNet { get; set; }
+        public int TotalEmployees { get; set; }
     }
 }
