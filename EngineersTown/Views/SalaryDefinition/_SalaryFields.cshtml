@@ -1,0 +1,156 @@
+﻿@model EngineersTown.Models.ViewModels.SalaryDefinitionViewModel
+
+@if (Model.EmployeeType == "001")
+{
+    <h4>Regular Employee Salary Components</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="BasicSalary" class="control-label"></label>
+                <input asp-for="BasicSalary" class="form-control" />
+                <span asp-validation-for="BasicSalary" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="HouseRentAllowance" class="control-label"></label>
+                <input asp-for="HouseRentAllowance" class="form-control" />
+                <span asp-validation-for="HouseRentAllowance" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="ConveyanceAllowance" class="control-label"></label>
+                <input asp-for="ConveyanceAllowance" class="form-control" />
+                <span asp-validation-for="ConveyanceAllowance" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="MedicalAllowance" class="control-label"></label>
+                <input asp-for="MedicalAllowance" class="form-control" />
+                <span asp-validation-for="MedicalAllowance" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="GunAllowance" class="control-label"></label>
+                <input asp-for="GunAllowance" class="form-control" />
+                <span asp-validation-for="GunAllowance" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="SupplementaryAllowance" class="control-label"></label>
+                <input asp-for="SupplementaryAllowance" class="form-control" />
+                <span asp-validation-for="SupplementaryAllowance" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="WashAllowance" class="control-label"></label>
+                <input asp-for="WashAllowance" class="form-control" />
+                <span asp-validation-for="WashAllowance" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="AdhocAllowance" class="control-label"></label>
+                <input asp-for="AdhocAllowance" class="form-control" />
+                <span asp-validation-for="AdhocAllowance" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="SRAAllowance" class="control-label"></label>
+                <input asp-for="SRAAllowance" class="form-control" />
+                <span asp-validation-for="SRAAllowance" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+}
+else if (Model.EmployeeType == "002")
+{
+    <h4>Contract Employee Salary Components</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="LumpSumAmount" class="control-label"></label>
+                <input asp-for="LumpSumAmount" class="form-control" />
+                <span asp-validation-for="LumpSumAmount" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="HouseRentAll" class="control-label"></label>
+                <input asp-for="HouseRentAll" class="form-control" />
+                <span asp-validation-for="HouseRentAll" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="ConveyanceAll" class="control-label"></label>
+                <input asp-for="ConveyanceAll" class="form-control" />
+                <span asp-validation-for="ConveyanceAll" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="GunAll" class="control-label"></label>
+                <input asp-for="GunAll" class="form-control" />
+                <span asp-validation-for="GunAll" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="MiscAllowance" class="control-label"></label>
+                <input asp-for="MiscAllowance" class="form-control" />
+                <span asp-validation-for="MiscAllowance" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+}
+else if (Model.EmployeeType == "003")
+{
+    <h4>Daily Wages Employee Salary Components</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="DailyWage" class="control-label"></label>
+                <input asp-for="DailyWage" class="form-control" />
+                <span asp-validation-for="DailyWage" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+}
+
+<h4 class="mt-4">Deductions</h4>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="EOBIDeduction" class="control-label"></label>
+            <input asp-for="EOBIDeduction" class="form-control" />
+            <span asp-validation-for="EOBIDeduction" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="MessDeduction" class="control-label"></label>
+            <input asp-for="MessDeduction" class="form-control" />
+            <span asp-validation-for="MessDeduction" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label asp-for="OtherDeductions" class="control-label"></label>
+            <input asp-for="OtherDeductions" class="form-control" />
+            <span asp-validation-for="OtherDeductions" class="text-danger"></span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,121 @@
+﻿@model EngineersTown.Models.ViewModels.SalaryDefinitionViewModel
+
+@{
+    ViewData["Title"] = "Salary Definition Details";
+}
+
+<h1>Salary Definition Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Employee</dt>
+        <dd class="col-sm-10">@Model.EmployeeName</dd>
+
+        <dt class="col-sm-2">Type</dt>
+        <dd class="col-sm-10">@Model.EmployeeType</dd>
+
+        <dt class="col-sm-2">Department</dt>
+        <dd class="col-sm-10">@Model.DepartmentName</dd>
+
+        <dt class="col-sm-2">Designation</dt>
+        <dd class="col-sm-10">@Model.DesignationName</dd>
+    </dl>
+
+    <h4 class="mt-4">Salary Components</h4>
+    <hr />
+
+    @if (Model.EmployeeType == "001")
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Basic Salary</dt>
+            <dd class="col-sm-9">@Model.BasicSalary?.ToString("C")</dd>
+
+            <dt class="col-sm-3">House Rent Allowance</dt>
+            <dd class="col-sm-9">@Model.HouseRentAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Conveyance Allowance</dt>
+            <dd class="col-sm-9">@Model.ConveyanceAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Medical Allowance</dt>
+            <dd class="col-sm-9">@Model.MedicalAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Gun Allowance</dt>
+            <dd class="col-sm-9">@Model.GunAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Supplementary Allowance</dt>
+            <dd class="col-sm-9">@Model.SupplementaryAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Wash Allowance</dt>
+            <dd class="col-sm-9">@Model.WashAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Adhoc Allowance</dt>
+            <dd class="col-sm-9">@Model.AdhocAllowance?.ToString("C")</dd>
+
+            <dt class="col-sm-3">SRA Allowance</dt>
+            <dd class="col-sm-9">@Model.SRAAllowance?.ToString("C")</dd>
+        </dl>
+    }
+    else if (Model.EmployeeType == "002")
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Lump Sum Amount</dt>
+            <dd class="col-sm-9">@Model.LumpSumAmount?.ToString("C")</dd>
+
+            <dt class="col-sm-3">House Rent (All)</dt>
+            <dd class="col-sm-9">@Model.HouseRentAll?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Conveyance (All)</dt>
+            <dd class="col-sm-9">@Model.ConveyanceAll?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Gun (All)</dt>
+            <dd class="col-sm-9">@Model.GunAll?.ToString("C")</dd>
+
+            <dt class="col-sm-3">Misc Allowance</dt>
+            <dd class="col-sm-9">@Model.MiscAllowance?.ToString("C")</dd>
+        </dl>
+    }
+    else if (Model.EmployeeType == "003")
+    {
+        <dl class="row">
+            <dt class="col-sm-3">Daily Wage</dt>
+            <dd class="col-sm-9">@Model.DailyWage?.ToString("C")</dd>
+        </dl>
+    }
+
+    <h4 class="mt-4">Deductions</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">EPF Deduction</dt>
+        <dd class="col-sm-9">@Model.EPFDeduction?.ToString("C")</dd>
+
+        <dt class="col-sm-3">Income Tax</dt>
+        <dd class="col-sm-9">@Model.IncomeTaxDeduction?.ToString("C")</dd>
+
+        <dt class="col-sm-3">EOBI</dt>
+        <dd class="col-sm-9">@Model.EOBIDeduction?.ToString("C")</dd>
+
+        <dt class="col-sm-3">Mess Deduction</dt>
+        <dd class="col-sm-9">@Model.MessDeduction?.ToString("C")</dd>
+
+        <dt class="col-sm-3">Other Deductions</dt>
+        <dd class="col-sm-9">@Model.OtherDeductions?.ToString("C")</dd>
+    </dl>
+
+    <h4 class="mt-4">Summary</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Gross Salary</dt>
+        <dd class="col-sm-9">@Model.GrossSalary.ToString("C")</dd>
+
+        <dt class="col-sm-3">Total Deductions</dt>
+        <dd class="col-sm-9">@Model.TotalDeductions.ToString("C")</dd>
+
+        <dt class="col-sm-3">Net Salary</dt>
+        <dd class="col-sm-9">@Model.NetSalary.ToString("C")</dd>
+    </dl>
+</div>
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
