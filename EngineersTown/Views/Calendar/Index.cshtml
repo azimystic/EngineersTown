@@ -1,0 +1,301 @@
+﻿@* Views/Calendar/Index.cshtml *@
+@model EngineersTown.Models.CalendarViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    ViewData["Title"] = "Monthly Calendar";
+    var monthNames = new[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+    var currentMonthName = monthNames[Model.Month - 1];
+    var prevMonth = Model.Month == 1 ? 12 : Model.Month - 1;
+    var prevYear = Model.Month == 1 ? Model.Year - 1 : Model.Year;
+    var nextMonth = Model.Month == 12 ? 1 : Model.Month + 1;
+    var nextYear = Model.Month == 12 ? Model.Year + 1 : Model.Year;
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
+<input type="hidden" name="__RequestVerificationToken" value="@token" />
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>@currentMonthName @Model.Year</h3>
+                    <div>
+                        <a href="@Url.Action("Index", new { year = prevYear, month = prevMonth })"
+                           class="btn btn-outline-primary btn-sm">Previous</a>
+                        <a href="@Url.Action("Index", new { year = DateTime.Now.Year, month = DateTime.Now.Month })"
+                           class="btn btn-outline-secondary btn-sm mx-2">Today</a>
+                        <a href="@Url.Action("Index", new { year = nextYear, month = nextMonth })"
+                           class="btn btn-outline-primary btn-sm">Next</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <form asp-action="Update" method="post" class="form-inline">
+                                <div class="form-group mr-2">
+                                    <select name="month" class="form-control">
+                                        @for (int i = 1; i <= 12; i++)
+                                        {
+                                            <option value="@i" selected="@(i == Model.Month)">@monthNames[i - 1]</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group mr-2">
+                                    <input type="number" name="year" value="@Model.Year" class="form-control" min="2000" max="2100" />
+                                </div>
+                                <button type="submit" class="btn btn-primary">Go</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="calendar-grid">
+                        <div class="calendar-header">
+                            @foreach (var day in Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>())
+                            {
+                                <div class="calendar-cell header-cell">@day.ToString().Substring(0, 3)</div>
+                            }
+                        </div>
+                        <div class="calendar-body">
+                            @for (int week = 0; week < 6; week++)
+                            {
+                                <div class="calendar-row">
+                                    @for (int day = 0; day < 7; day++)
+                                    {
+                                        var index = week * 7 + day;
+                                        if (index < Model.Days.Count)
+                                        {
+                                            var calendarDay = Model.Days[index];
+                                            <div class="calendar-cell @(!calendarDay.IsCurrentMonth ? "other-month" : "")
+                                                             @(calendarDay.IsToday ? "today" : "")
+                                                             @(calendarDay.IsOffDay ? "off-day" : "")
+                                                             @(calendarDay.IsCustomHoliday ? "custom-holiday" : "")"
+                                                 onclick="showDayModal('@calendarDay.Date.ToString("yyyy-MM-dd")', @calendarDay.IsCustomHoliday.ToString().ToLower(), '@calendarDay.EventTitle')">
+                                                <div class="day-number">@calendarDay.DayNumber</div>
+                                                @if (calendarDay.IsCustomHoliday && !string.IsNullOrEmpty(calendarDay.EventTitle))
+                                                {
+                                                    <div class="event-title">@calendarDay.EventTitle</div>
+                                                }
+                                                else if (!calendarDay.IsOffDay && calendarDay.OfficeStartTime.HasValue)
+                                                {
+                                                    <div class="office-hours">
+                                                        @calendarDay.OfficeStartTime?.ToString(@"hh\:mm") - @calendarDay.OfficeEndTime?.ToString(@"hh\:mm")
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding/removing holidays -->
+<div class="modal fade" id="dayModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Date: <span id="modalDate"></span></h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="holidayForm">
+                    <div class="form-group">
+                        <label for="holidayTitle">Holiday Title</label>
+                        <input type="text" class="form-control" id="holidayTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="holidayDescription">Description (Optional)</label>
+                        <textarea class="form-control" id="holidayDescription" rows="3"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="addHoliday()">Add Holiday</button>
+                </div>
+                <div id="holidayInfo" style="display: none;">
+                    <h6>Current Holiday:</h6>
+                    <p id="currentHolidayTitle"></p>
+                    <button type="button" class="btn btn-danger" onclick="removeHoliday()">Remove Holiday</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+    <style>
+        .calendar-grid {
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .calendar-body {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+        }
+
+        .calendar-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            min-height: 100px;
+        }
+
+        .calendar-cell {
+            border: 1px solid #dee2e6;
+            padding: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+            .calendar-cell:hover {
+                background-color: #e9ecef;
+            }
+
+        .header-cell {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .other-month {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .today {
+            background-color: #e3f2fd;
+            border: 2px solid #2196f3;
+        }
+
+        .off-day {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .custom-holiday {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .day-number {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .event-title {
+            font-size: 0.8em;
+            margin-top: 5px;
+            color: #856404;
+        }
+
+        .office-hours {
+            font-size: 0.7em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    </style>
+ 
+
+ 
+    <script>
+        let selectedDate = '';
+
+        function showDayModal(date, isHoliday, holidayTitle) {
+            selectedDate = date;
+            const modalDate = new Date(date + 'T00:00:00');
+            document.getElementById('modalDate').textContent = modalDate.toLocaleDateString();
+
+            if (isHoliday) {
+                document.getElementById('holidayForm').style.display = 'none';
+                document.getElementById('holidayInfo').style.display = 'block';
+                document.getElementById('currentHolidayTitle').textContent = holidayTitle;
+            } else {
+                document.getElementById('holidayForm').style.display = 'block';
+                document.getElementById('holidayInfo').style.display = 'none';
+                document.getElementById('holidayTitle').value = '';
+                document.getElementById('holidayDescription').value = '';
+            }
+
+            $('#dayModal').modal('show');
+        }
+
+          function addHoliday() {
+        const title = document.getElementById('holidayTitle').value;
+        const description = document.getElementById('holidayDescription').value;
+
+        if (!title) {
+            alert('Please enter a holiday title');
+            return;
+        }
+
+        const dateObj = new Date(selectedDate);
+        const formattedDate = dateObj.toISOString(); // Full ISO string
+
+        fetch('@Url.Action("AddHoliday", "Calendar")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({
+                date: formattedDate,
+                title: title,
+                description: description
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Holiday added successfully');
+                $('#dayModal').modal('hide');
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error adding holiday: ' + error);
+        });
+    }
+
+           function removeHoliday() {
+        if (confirm('Are you sure you want to remove this holiday?')) {
+            fetch('@Url.Action("RemoveHoliday", "Calendar")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({
+                    date: selectedDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Holiday removed successfully');
+                    $('#dayModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error removing holiday: ' + error);
+            });
+        }
+    }
+
+    </script>
+ 

@@ -1,0 +1,498 @@
+﻿@using EngineersTown.Controllers
+@model PayrollReportViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payroll Report - @Model.MonthName</title>
+    <style>
+        @@page {
+            size: A4 landscape;
+            margin: 0.5in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
+        }
+
+            .header h1 {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+
+            .header h2 {
+                font-size: 14px;
+                color: #666;
+            }
+
+        .section-header {
+            background-color: #000;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 30px;
+            page-break-before: always;
+        }
+
+            .section-header:first-of-type {
+                page-break-before: avoid;
+            }
+
+        .department-header {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-left: 4px solid #007bff;
+            margin-top: 15px;
+        }
+
+        .payroll-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 9px;
+        }
+
+            .payroll-table th,
+            .payroll-table td {
+                border: 1px solid #ccc;
+                padding: 3px;
+                text-align: right;
+                vertical-align: middle;
+            }
+
+            .payroll-table th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .payroll-table .employee-name {
+                text-align: left;
+                font-weight: bold;
+            }
+
+            .payroll-table .designation {
+                text-align: left;
+            }
+
+        .department-total {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        .grand-total {
+            background-color: #fff3cd;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .amount {
+            font-family: 'Courier New', monospace;
+        }
+
+        .positive {
+            color: #28a745;
+        }
+
+        .negative {
+            color: #dc3545;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        @@media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        .summary-box {
+            float: right;
+            width: 300px;
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+
+            .summary-box h4 {
+                text-align: center;
+                margin-bottom: 10px;
+                font-size: 12px;
+            }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+
+            .summary-row:last-child {
+                border-bottom: 2px solid #000;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="header">
+        <h1>ENGINEERS TOWN</h1>
+        <h2>Payroll Report for @Model.MonthName</h2>
+        <p>Generated on: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+
+    <!-- Regular Employees Section -->
+    @if (Model.RegularEmployees.Any())
+    {
+        <div class="section-header">
+            REGULAR EMPLOYEES (TYPE 001) - @Model.RegularEmployees.Sum(g => g.Count()) Employee(s)
+        </div>
+
+        @foreach (var departmentGroup in Model.RegularEmployees)
+        {
+            <div class="department-header">
+                @departmentGroup.Key Department (@departmentGroup.Count() Employee(s))
+            </div>
+
+            <table class="payroll-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 120px;">Employee Name</th>
+                        <th rowspan="2" style="width: 80px;">Designation</th>
+                        <th rowspan="2" style="width: 40px;">60 Yr Age</th>
+                        <th colspan="9" style="background-color: #e8f5e8;">ALLOWANCES</th>
+                        <th colspan="4" style="background-color: #ffe8e8;">DEDUCTIONS</th>
+                        <th rowspan="2" style="width: 40px;">Absent Days</th>
+                        <th rowspan="2" style="width: 60px;">Absent Deduction</th>
+                        <th rowspan="2" style="width: 80px;">NET PAYABLE</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 50px;">Basic</th>
+                        <th style="width: 50px;">H.Rent</th>
+                        <th style="width: 45px;">Conv.</th>
+                        <th style="width: 45px;">Medical</th>
+                        <th style="width: 40px;">Gun</th>
+                        <th style="width: 40px;">SPL</th>
+                        <th style="width: 40px;">Wash</th>
+                        <th style="width: 40px;">Adhoc</th>
+                        <th style="width: 40px;">SRA</th>
+                        <th style="width: 50px;">EPF</th>
+                        <th style="width: 50px;">I.Tax</th>
+                        <th style="width: 40px;">EOBI</th>
+                        <th style="width: 40px;">Other</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        <tr>
+                            <td class="employee-name">@employee.EmployeeName</td>
+                            <td class="designation">@employee.DesignationName</td>
+                            <td>@employee.YearsUntil60</td>
+                            <td class="amount">@(employee.BasicSalary?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.HouseRentAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.ConveyanceAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.MedicalAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.GunAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.SupplementaryAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.WashAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.AdhocAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.SRAAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.EPFDeduction?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.IncomeTaxDeduction?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.EOBIDeduction?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.OtherDeductions?.ToString("N0") ?? "0")</td>
+                            <td>@employee.AbsentDays</td>
+                            <td class="amount negative">@employee.AbsentDeductions.ToString("N0")</td>
+                            <td class="amount positive"><strong>@employee.NetPayable.ToString("N0")</strong></td>
+                        </tr>
+                    }
+                    <tr class="department-total">
+                        <td colspan="10"><strong>@departmentGroup.Key - TOTAL</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.EPFDeduction ?? 0).ToString("N0")</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N0")</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N0")</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N0")</strong></td>
+                        <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N0")</strong></td>
+                        <td class="amount positive"><strong>@departmentGroup.Sum(e => e.NetPayable).ToString("N0")</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        <div class="summary-box">
+            <h4>REGULAR EMPLOYEES SUMMARY</h4>
+            <div class="summary-row">
+                <span>Total Employees:</span>
+                <span>@Model.RegularEmployees.Sum(g => g.Count())</span>
+            </div>
+            <div class="summary-row">
+                <span>Gross Salary:</span>
+                <span>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.GrossSalary).ToString("N0")</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Deductions:</span>
+                <span>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.TotalDeductions + e.AbsentDeductions).ToString("N0")</span>
+            </div>
+            <div class="summary-row">
+                <span>NET PAYABLE:</span>
+                <span>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N0")</span>
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+    }
+
+    <!-- Contract Employees Section -->
+    @if (Model.ContractEmployees.Any())
+    {
+        <div class="section-header">
+            CONTRACT EMPLOYEES (TYPE 002) - @Model.ContractEmployees.Sum(g => g.Count()) Employee(s)
+        </div>
+
+        @foreach (var departmentGroup in Model.ContractEmployees)
+        {
+            <div class="department-header">
+                @departmentGroup.Key Department (@departmentGroup.Count() Employee(s))
+            </div>
+
+            <table class="payroll-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 120px;">Employee Name</th>
+                        <th rowspan="2" style="width: 80px;">Contract Expiry</th>
+                        <th colspan="5" style="background-color: #e8f5e8;">ALLOWANCES</th>
+                        <th colspan="3" style="background-color: #ffe8e8;">DEDUCTIONS</th>
+                        <th rowspan="2" style="width: 60px;">Present Days</th>
+                        <th rowspan="2" style="width: 60px;">Absent Deduction</th>
+                        <th rowspan="2" style="width: 80px;">NET PAYABLE</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 60px;">Lump Sum</th>
+                        <th style="width: 50px;">H.Rent</th>
+                        <th style="width: 45px;">Conv.</th>
+                        <th style="width: 40px;">Gun</th>
+                        <th style="width: 40px;">Misc.</th>
+                        <th style="width: 50px;">I.Tax</th>
+                        <th style="width: 40px;">EOBI</th>
+                        <th style="width: 40px;">Other</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        <tr>
+                            <td class="employee-name">@employee.EmployeeName</td>
+                            <td>@(employee.ContractExpiryDate?.ToString("dd/MM/yy") ?? "N/A")</td>
+                            <td class="amount">@(employee.LumpSumAmount?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.HouseRentAll?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.ConveyanceAll?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.GunAll?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.MiscAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.IncomeTaxDeduction?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.EOBIDeduction?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.OtherDeductions?.ToString("N0") ?? "0")</td>
+                            <td>@employee.PresentDays/@employee.TotalWorkingDays</td>
+                            <td class="amount negative">@employee.AbsentDeductions.ToString("N0")</td>
+                            <td class="amount positive"><strong>@employee.NetPayable.ToString("N0")</strong></td>
+                        </tr>
+                    }
+                    <tr class="department-total">
+                        <td colspan="7"><strong>@departmentGroup.Key - TOTAL</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N0")</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N0")</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N0")</strong></td>
+                        <td></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N0")</strong></td>
+                        <td class="amount positive"><strong>@departmentGroup.Sum(e => e.NetPayable).ToString("N0")</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        <div class="summary-box">
+            <h4>CONTRACT EMPLOYEES SUMMARY</h4>
+            <div class="summary-row">
+                <span>Total Employees:</span>
+                <span>@Model.ContractEmployees.Sum(g => g.Count())</span>
+            </div>
+            <div class="summary-row">
+                <span>Gross Salary:</span>
+                <span>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.GrossSalary).ToString("N0")</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Deductions:</span>
+                <span>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.TotalDeductions + e.AbsentDeductions).ToString("N0")</span>
+            </div>
+            <div class="summary-row">
+                <span>NET PAYABLE:</span>
+                <span>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N0")</span>
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+    }
+
+    <!-- Daily Wage Employees Section -->
+    @if (Model.DailyWageEmployees.Any())
+    {
+        <div class="section-header">
+            DAILY WAGE EMPLOYEES (TYPE 003) - @Model.DailyWageEmployees.Sum(g => g.Count()) Employee(s)
+        </div>
+
+        @foreach (var departmentGroup in Model.DailyWageEmployees)
+        {
+            <div class="department-header">
+                @departmentGroup.Key Department (@departmentGroup.Count() Employee(s))
+            </div>
+
+            <table class="payroll-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Employee Name</th>
+                        <th style="width: 60px;">Daily Wage</th>
+                        <th style="width: 50px;">Total Days</th>
+                        <th style="width: 70px;">Total Amount</th>
+                        <th style="width: 60px;">Arm Allowance</th>
+                        <th style="width: 60px;">Mess Deduction</th>
+                        <th style="width: 50px;">Present Days</th>
+                        <th style="width: 50px;">Absent Days</th>
+                        <th style="width: 70px;">Absent Deduction</th>
+                        <th style="width: 80px;">NET PAYABLE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        <tr>
+                            <td class="employee-name">@employee.EmployeeName</td>
+                            <td class="amount">@(employee.DailyWage?.ToString("N0") ?? "0")</td>
+                            <td>@DateTime.DaysInMonth(Model.Year, Model.Month)</td>
+                            <td class="amount">@(employee.TotalDailyWages?.ToString("N0") ?? "0")</td>
+                            <td class="amount">@(employee.GunAllowance?.ToString("N0") ?? "0")</td>
+                            <td class="amount negative">@(employee.MessDeduction?.ToString("N0") ?? "0")</td>
+                            <td>@employee.PresentDays</td>
+                            <td>@employee.AbsentDays</td>
+                            <td class="amount negative">@employee.AbsentDeductions.ToString("N0")</td>
+                            <td class="amount positive"><strong>@employee.NetPayable.ToString("N0")</strong></td>
+                        </tr>
+                    }
+                    <tr class="department-total">
+                        <td colspan="4"><strong>@departmentGroup.Key - TOTAL</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.GunAllowance ?? 0).ToString("N0")</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.MessDeduction ?? 0).ToString("N0")</strong></td>
+                        <td><strong>@departmentGroup.Sum(e => e.PresentDays)</strong></td>
+                        <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                        <td class="amount"><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N0")</strong></td>
+                        <td class="amount positive"><strong>@departmentGroup.Sum(e => e.NetPayable).ToString("N0")</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        <div class="summary-box">
+            <h4>DAILY WAGE EMPLOYEES SUMMARY</h4>
+            <div class="summary-row">
+                <span>Total Employees:</span>
+                <span>@Model.DailyWageEmployees.Sum(g => g.Count())</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Amount:</span>
+                <span>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.TotalDailyWages ?? 0).ToString("N0")</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Deductions:</span>
+                <span>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => (e.MessDeduction ?? 0) + e.AbsentDeductions).ToString("N0")</span>
+            </div>
+            <div class="summary-row">
+                <span>NET PAYABLE:</span>
+                <span>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N0")</span>
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+    }
+
+    <!-- Grand Summary -->
+    <div class="section-header" style="margin-top: 50px;">
+        GRAND SUMMARY - ALL EMPLOYEES (@Model.MonthName)
+    </div>
+
+    <table class="payroll-table" style="width: 60%; margin: 20px auto;">
+        <thead>
+            <tr>
+                <th style="width: 200px;">Employee Type</th>
+                <th style="width: 80px;">Count</th>
+                <th style="width: 120px;">Gross Amount</th>
+                <th style="width: 120px;">Total Deductions</th>
+                <th style="width: 120px;">Net Payable</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="employee-name">Regular Employees (001)</td>
+                <td>@Model.RegularEmployees.Sum(g => g.Count())</td>
+                <td class="amount">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.GrossSalary).ToString("N0")</td>
+                <td class="amount">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.TotalDeductions + e.AbsentDeductions).ToString("N0")</td>
+                <td class="amount positive">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="employee-name">Contract Employees (002)</td>
+                <td>@Model.ContractEmployees.Sum(g => g.Count())</td>
+                <td class="amount">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.GrossSalary).ToString("N0")</td>
+                <td class="amount">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.TotalDeductions + e.AbsentDeductions).ToString("N0")</td>
+                <td class="amount positive">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N0")</td>
+            </tr>
+            <tr>
+                <td class="employee-name">Daily Wage Employees (003)</td>
+                <td>@Model.DailyWageEmployees.Sum(g => g.Count())</td>
+                <td class="amount">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.TotalDailyWages ?? 0).ToString("N0")</td>
+                <td class="amount">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => (e.MessDeduction ?? 0) + e.AbsentDeductions).ToString("N0")</td>
+                <td class="amount positive">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N0")</td>
+            </tr>
+            <tr class="grand-total">
+                <td><strong>GRAND TOTAL</strong></td>
+                <td><strong>@(Model.RegularEmployees.Sum(g => g.Count()) + Model.ContractEmployees.Sum(g => g.Count()) + Model.DailyWageEmployees.Sum(g => g.Count()))</strong></td>
+                <td class="amount"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.GrossSalary) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.GrossSalary) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.TotalDailyWages ?? 0)).ToString("N0"))</strong></td>
+                <td class="amount"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.TotalDeductions + e.AbsentDeductions) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.TotalDeductions + e.AbsentDeductions) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => (e.MessDeduction ?? 0) + e.AbsentDeductions)).ToString("N0"))</strong></td>
+                <td class="amount positive"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.NetPayable) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.NetPayable) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.NetPayable)).ToString("N0"))</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 50px; text-align: center; font-size: 10px; color: #666;">
+        <hr style="width: 50%; margin: 20px auto;" />
+        <p>Generated by Engineers Town Payroll System</p>
+        <p>Report Date: @DateTime.Now.ToString("dd MMMM yyyy HH:mm")</p>
+        <p>This is a system generated report and does not require signature</p>
+    </div>
+</body>
+</html>

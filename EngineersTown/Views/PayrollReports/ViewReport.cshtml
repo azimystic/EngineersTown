@@ -1,0 +1,306 @@
+﻿@using EngineersTown.Controllers
+@model PayrollReportViewModel
+@{
+    ViewData["Title"] = $"Payroll Report - {Model.MonthName}";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-invoice-dollar"></i> Payroll Report - @Model.MonthName
+                    </h3>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Print", new { month = Model.Month, year = Model.Year })"
+                           class="btn btn-success" target="_blank">
+                            <i class="fas fa-print"></i> Print Report
+                        </a>
+                        <a href="@Url.Action("Index")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Reports
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="regular-tab" data-toggle="tab" href="#regular" role="tab">
+                                <i class="fas fa-user-tie"></i> Regular Employees (@Model.RegularEmployees.Sum(g => g.Count()))
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="contract-tab" data-toggle="tab" href="#contract" role="tab">
+                                <i class="fas fa-handshake"></i> Contract Employees (@Model.ContractEmployees.Sum(g => g.Count()))
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="daily-tab" data-toggle="tab" href="#daily" role="tab">
+                                <i class="fas fa-tools"></i> Daily Wage Employees (@Model.DailyWageEmployees.Sum(g => g.Count()))
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="reportTabsContent">
+                        <!-- Regular Employees Tab -->
+                        <div class="tab-pane fade show active" id="regular" role="tabpanel">
+                            @if (Model.RegularEmployees.Any())
+                            {
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-bordered table-striped table-sm">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Designation</th>
+                                                <th>60 Yr Age</th>
+                                                <th>Basic Pay</th>
+                                                <th>House Rent</th>
+                                                <th>Conveyance</th>
+                                                <th>Medical</th>
+                                                <th>Gun</th>
+                                                <th>SPL</th>
+                                                <th>Wash</th>
+                                                <th>Adhoc</th>
+                                                <th>SRA</th>
+                                                <th>Gross Salary</th>
+                                                <th>EPF</th>
+                                                <th>Income Tax</th>
+                                                <th>EOBI</th>
+                                                <th>Other</th>
+                                                <th>Absent Days</th>
+                                                <th>Absent Deduction</th>
+                                                <th>Net Payable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var departmentGroup in Model.RegularEmployees)
+                                            {
+                                                <tr class="table-info">
+                                                    <td colspan="20"><strong>@departmentGroup.Key</strong></td>
+                                                </tr>
+                                                @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                                                {
+                                                    <tr>
+                                                        <td>@employee.EmployeeName</td>
+                                                        <td>@employee.DesignationName</td>
+                                                        <td>@employee.YearsUntil60</td>
+                                                        <td>@employee.BasicSalary?.ToString("N2")</td>
+                                                        <td>@employee.HouseRentAllowance?.ToString("N2")</td>
+                                                        <td>@employee.ConveyanceAllowance?.ToString("N2")</td>
+                                                        <td>@employee.MedicalAllowance?.ToString("N2")</td>
+                                                        <td>@employee.GunAllowance?.ToString("N2")</td>
+                                                        <td>@employee.SupplementaryAllowance?.ToString("N2")</td>
+                                                        <td>@employee.WashAllowance?.ToString("N2")</td>
+                                                        <td>@employee.AdhocAllowance?.ToString("N2")</td>
+                                                        <td>@employee.SRAAllowance?.ToString("N2")</td>
+                                                        <td><strong>@employee.GrossSalary.ToString("N2")</strong></td>
+                                                        <td>@employee.EPFDeduction?.ToString("N2")</td>
+                                                        <td>@employee.IncomeTaxDeduction?.ToString("N2")</td>
+                                                        <td>@employee.EOBIDeduction?.ToString("N2")</td>
+                                                        <td>@employee.OtherDeductions?.ToString("N2")</td>
+                                                        <td>@employee.AbsentDays</td>
+                                                        <td>@employee.AbsentDeductions.ToString("N2")</td>
+                                                        <td><strong class="text-success">@employee.NetPayable.ToString("N2")</strong></td>
+                                                    </tr>
+                                                }
+                                                <tr class="table-secondary">
+                                                    <td colspan="13"><strong>Department Total</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.EPFDeduction ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
+                                                    <td><strong class="text-success">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</strong></td>
+                                                </tr>
+                                            }
+                                            <tr class="table-warning">
+                                                <td colspan="13"><strong>GRAND TOTAL - REGULAR EMPLOYEES</strong></td>
+                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.EPFDeduction ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</strong></td>
+                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
+                                                <td><strong class="text-success">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-3">No regular employees found for this period.</div>
+                            }
+                        </div>
+
+                        <!-- Contract Employees Tab -->
+                        <div class="tab-pane fade" id="contract" role="tabpanel">
+                            @if (Model.ContractEmployees.Any())
+                            {
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-bordered table-striped table-sm">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Expiry Date</th>
+                                                <th>Lump Sum</th>
+                                                <th>House Rent</th>
+                                                <th>Conveyance</th>
+                                                <th>Gun</th>
+                                                <th>Misc</th>
+                                                <th>Gross Salary</th>
+                                                <th>Income Tax</th>
+                                                <th>EOBI</th>
+                                                <th>Other</th>
+                                                <th>Present Days</th>
+                                                <th>Absent Deduction</th>
+                                                <th>Net Payable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var departmentGroup in Model.ContractEmployees)
+                                            {
+                                                <tr class="table-info">
+                                                    <td colspan="14"><strong>@departmentGroup.Key</strong></td>
+                                                </tr>
+                                                @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                                                {
+                                                    <tr>
+                                                        <td>@employee.EmployeeName</td>
+                                                        <td>@employee.ContractExpiryDate?.ToString("dd/MM/yyyy")</td>
+                                                        <td>@employee.LumpSumAmount?.ToString("N2")</td>
+                                                        <td>@employee.HouseRentAll?.ToString("N2")</td>
+                                                        <td>@employee.ConveyanceAll?.ToString("N2")</td>
+                                                        <td>@employee.GunAll?.ToString("N2")</td>
+                                                        <td>@employee.MiscAllowance?.ToString("N2")</td>
+                                                        <td><strong>@employee.GrossSalary.ToString("N2")</strong></td>
+                                                        <td>@employee.IncomeTaxDeduction?.ToString("N2")</td>
+                                                        <td>@employee.EOBIDeduction?.ToString("N2")</td>
+                                                        <td>@employee.OtherDeductions?.ToString("N2")</td>
+                                                        <td>@employee.PresentDays/@employee.TotalWorkingDays</td>
+                                                        <td>@employee.AbsentDeductions.ToString("N2")</td>
+                                                        <td><strong class="text-success">@employee.NetPayable.ToString("N2")</strong></td>
+                                                    </tr>
+                                                }
+                                                <tr class="table-secondary">
+                                                    <td colspan="8"><strong>Department Total</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
+                                                    <td></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
+                                                    <td><strong class="text-success">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</strong></td>
+                                                </tr>
+                                            }
+                                            <tr class="table-warning">
+                                                <td colspan="8"><strong>GRAND TOTAL - CONTRACT EMPLOYEES</strong></td>
+                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
+                                                <td></td>
+                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
+                                                <td><strong class="text-success">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-3">No contract employees found for this period.</div>
+                            }
+                        </div>
+
+                        <!-- Daily Wage Employees Tab -->
+                        <div class="tab-pane fade" id="daily" role="tabpanel">
+                            @if (Model.DailyWageEmployees.Any())
+                            {
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-bordered table-striped table-sm">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Daily Wage</th>
+                                                <th>Total Days</th>
+                                                <th>Total Amount</th>
+                                                <th>Arm Allowance</th>
+                                                <th>Mess Deduction</th>
+                                                <th>Present Days</th>
+                                                <th>Absent Days</th>
+                                                <th>Absent Deduction</th>
+                                                <th>Net Payable</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var departmentGroup in Model.DailyWageEmployees)
+                                            {
+                                                <tr class="table-info">
+                                                    <td colspan="10"><strong>@departmentGroup.Key</strong></td>
+                                                </tr>
+                                                @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                                                {
+                                                    <tr>
+                                                        <td>@employee.EmployeeName</td>
+                                                        <td>@employee.DailyWage?.ToString("N2")</td>
+                                                        <td>@DateTime.DaysInMonth(Model.Year, Model.Month)</td>
+                                                        <td>@employee.TotalDailyWages?.ToString("N2")</td>
+                                                        <td>@employee.GunAllowance?.ToString("N2")</td>
+                                                        <td>@employee.MessDeduction?.ToString("N2")</td>
+                                                        <td>@employee.PresentDays</td>
+                                                        <td>@employee.AbsentDays</td>
+                                                        <td>@employee.AbsentDeductions.ToString("N2")</td>
+                                                        <td><strong class="text-success">@employee.NetPayable.ToString("N2")</strong></td>
+                                                    </tr>
+                                                }
+                                                <tr class="table-secondary">
+                                                    <td colspan="4"><strong>Department Total</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.GunAllowance ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.MessDeduction ?? 0).ToString("N2")</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.PresentDays)</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
+                                                    <td><strong class="text-success">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</strong></td>
+                                                </tr>
+                                            }
+                                            <tr class="table-warning">
+                                                <td colspan="4"><strong>GRAND TOTAL - DAILY WAGE EMPLOYEES</strong></td>
+                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.GunAllowance ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.MessDeduction ?? 0).ToString("N2")</strong></td>
+                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.PresentDays)</strong></td>
+                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</strong></td>
+                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
+                                                <td><strong class="text-success">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info mt-3">No daily wage employees found for this period.</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTables for better viewing
+            $('.table').DataTable({
+                "paging": false,
+                "searching": false,
+                "info": false,
+                "ordering": false,
+                "scrollX": true
+            });
+        });
+    </script>
+}

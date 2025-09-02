@@ -36,6 +36,7 @@ namespace EngineersTown.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,DepartmentId")] Designation designation)
         {
+            ModelState.Remove("Department");
             if (ModelState.IsValid)
             {
                 _context.Add(designation);
