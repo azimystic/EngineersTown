@@ -1,3 +1,4 @@
+﻿using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using EngineersTown.Data;
 using EngineersTown.Services;
@@ -52,4 +53,24 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Run();
+// Run server in background
+var runTask = app.RunAsync();
+
+// 🔥 Auto open browser on publish/run
+try
+{
+    // You can configure this port in Properties/launchSettings.json
+    var url = "http://localhost:5000"; // or "http://localhost:5000"
+    Process.Start(new ProcessStartInfo
+    {
+        FileName = url,
+        UseShellExecute = true
+    });
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Could not open browser: " + ex.Message);
+}
+
+// Wait for shutdown
+await runTask;

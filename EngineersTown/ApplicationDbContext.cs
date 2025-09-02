@@ -141,9 +141,7 @@ namespace EngineersTown.Data
 
             // Seed default office timings
             SeedOfficeTimings(modelBuilder);
-
-            // Seed sample data
-            SeedSampleData(modelBuilder);
+ 
         }
 
         private void SeedOfficeTimings(ModelBuilder modelBuilder)

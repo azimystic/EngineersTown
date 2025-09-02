@@ -175,7 +175,7 @@
     @if (Model.RegularEmployees.Any())
     {
         <div class="section-header">
-            REGULAR EMPLOYEES (TYPE 001) - @Model.RegularEmployees.Sum(g => g.Count()) Employee(s)
+            REGULAR EMPLOYEES - @Model.RegularEmployees.Sum(g => g.Count()) Employee(s)
         </div>
 
         @foreach (var departmentGroup in Model.RegularEmployees)
@@ -238,7 +238,7 @@
                         </tr>
                     }
                     <tr class="department-total">
-                        <td colspan="10"><strong>@departmentGroup.Key - TOTAL</strong></td>
+                        <td colspan="12"><strong>@departmentGroup.Key - TOTAL</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.EPFDeduction ?? 0).ToString("N0")</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N0")</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N0")</strong></td>

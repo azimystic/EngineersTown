@@ -1,33 +1,184 @@
-﻿@model IEnumerable<Employee>
+﻿@model IEnumerable<EngineersTown.Models.Employee>
 
-<h2>Employees</h2>
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>ZkedID</th>
-            <th>Department</th>
-            <th>Designation</th>
-            <th>Type</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.ZkedID</td>
-                <td>@item.Department.Name</td>
-                <td>@item.Designation.Name</td>
-                <td>@(item.Type == "001" ? "Regular" : item.Type == "002" ? "Contract" : "Daily Wager")</td>
-                <td>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="mb-4">Employee Management</h2>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create New
+                </a>
+
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-status="all">
+                        All Employees
+                    </button>
+                    <button type="button" class="btn btn-outline-success" data-status="active">
+                        Active Employees
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-status="left">
+                        Left Employees
+                    </button>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table id="employeeTable" class="table table-striped table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>ZkedID</th>
+                                <th>CNIC</th>
+                                <th>Date of Birth</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Type</th>
+                                <th>Contract Expiry</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr data-status="@(item.HasLeft ? "left" : "active")">
+                                    <td>@item.Name</td>
+                                    <td>@item.ZkedID</td>
+                                    <td>@item.CNIC</td>
+                                    <td>@item.DOB.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.Department?.Name</td>
+                                    <td>@item.Designation?.Name</td>
+                                    <td>
+                                        @if (item.Type == "001")
+                                        {
+                                            <span class="badge bg-success">Regular</span>
+                                        }
+                                        else if (item.Type == "002")
+                                        {
+                                            <span class="badge bg-info">Contract</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">Daily Wager</span>
+                                        }
+                                    </td>
+                                    <td>@(item.ContractExpiryDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                                    <td>
+                                        @if (item.HasLeft)
+                                        {
+                                            <span class="badge bg-secondary">Left</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            @if (item.HasLeft)
+                                            {
+                                                <form asp-action="Restore" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Reactivate Employee">
+                                                        <i class="fas fa-user-check"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Mark as Left">
+                                                        <i class="fas fa-user-times"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function() {
+            var table = $('#employeeTable').DataTable({
+                responsive: true,
+                columnDefs: [
+                    { orderable: false, targets: [9] },
+                    { searchable: false, targets: [9] }
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search employees..."
+                },
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>'
+            });
+
+            // Filter buttons functionality
+            $('[data-status]').on('click', function() {
+                var status = $(this).data('status');
+
+                // Update button states
+                $('[data-status]').removeClass('active');
+                $(this).addClass('active');
+
+                if (status === 'all') {
+                    table.columns().search('').draw();
+                } else {
+                    // Filter by status
+                    table.column(8).search(status === 'active' ? '^Active$' : '^Left$', true, false).draw();
+                }
+            });
+
+            // Add confirmation to delete/restore actions
+            $('form').on('submit', function(e) {
+                var action = $(this).find('button').attr('title');
+                if (!confirm(`Are you sure you want to ${action}?`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .card {
+            border: none;
+            border-radius: 12px;
         }
-    </tbody>
-</table>
+
+        .dataTables_filter input {
+            border-radius: 20px;
+            padding: 5px 15px;
+            border: 1px solid #ddd;
+        }
+
+        .btn {
+            border-radius: 6px;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: rgba(0, 123, 255, 0.05) !important;
+        }
+    </style>
+}

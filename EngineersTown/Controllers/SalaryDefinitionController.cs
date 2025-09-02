@@ -61,7 +61,7 @@ namespace EngineersTown.Controllers
                 var employees = await _context.Employees
                     .Include(e => e.Department)
                     .Include(e => e.Designation)
-                    .Where(e => !_context.SalaryDefinitions.Any(s => s.EmployeeId == e.Id))
+                    .Where(e => !_context.SalaryDefinitions.Any(s => s.EmployeeId == e.Id) && e.HasLeft == false)
                     .OrderBy(e => e.Name)
                     .ToListAsync();
 

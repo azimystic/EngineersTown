@@ -110,15 +110,23 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="btn-group" role="group">
-                                        <a href="@Url.Action("GenerateReport", new { month = DateTime.Now.Month, year = DateTime.Now.Year })" 
-                                           class="btn btn-warning">
-                                            <i class="fas fa-calendar-alt"></i> Current Month Report
-                                        </a>
-                                        <a href="@Url.Action("GenerateReport", new { month = DateTime.Now.AddMonths(-1).Month, year = DateTime.Now.AddMonths(-1).Year })" 
-                                           class="btn btn-secondary">
-                                            <i class="fas fa-calendar-minus"></i> Previous Month Report
-                                        </a>
+                                        <form method="post" asp-action="GenerateReport" asp-controller="PayrollReports" style="display:inline;">
+                                            <input type="hidden" name="month" value="@DateTime.Now.Month" />
+                                            <input type="hidden" name="year" value="@DateTime.Now.Year" />
+                                            <button type="submit" class="btn btn-warning">
+                                                <i class="fas fa-calendar-alt"></i> Current Month Report
+                                            </button>
+                                        </form>
+
+                                        <form method="post" asp-action="GenerateReport" asp-controller="PayrollReports" style="display:inline;">
+                                            <input type="hidden" name="month" value="@DateTime.Now.AddMonths(-1).Month" />
+                                            <input type="hidden" name="year" value="@DateTime.Now.AddMonths(-1).Year" />
+                                            <button type="submit" class="btn btn-secondary">
+                                                <i class="fas fa-calendar-minus"></i> Previous Month Report
+                                            </button>
+                                        </form>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

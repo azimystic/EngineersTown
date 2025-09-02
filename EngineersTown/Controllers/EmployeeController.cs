@@ -66,6 +66,89 @@ namespace EngineersTown.Controllers
             return View(employee);
         }
 
+        // GET: Employee/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            ViewData["DesignationId"] = new SelectList(
+                _context.Designations.Where(d => d.DepartmentId == employee.DepartmentId),
+                "Id", "Name", employee.DesignationId
+            );
+            ViewData["EmployeeTypes"] = new SelectList(new[]
+            {
+                new { Value = "001", Text = "Regular" },
+                new { Value = "002", Text = "Contract" },
+                new { Value = "003", Text = "Daily Wager" }
+            }, "Value", "Text", employee.Type);
+
+            return View(employee);
+        }
+
+        // POST: Employee/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ZkedID,CNIC,DOB,DepartmentId,DesignationId,Type,ContractExpiryDate")] Employee employee)
+        {
+            if (id != employee.Id)
+            {
+                return NotFound();
+            }
+
+            ModelState.Remove("Department");
+            ModelState.Remove("Designation");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(employee);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EmployeeExists(employee.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            ViewData["DesignationId"] = new SelectList(
+                _context.Designations.Where(d => d.DepartmentId == employee.DepartmentId),
+                "Id", "Name", employee.DesignationId
+            );
+            ViewData["EmployeeTypes"] = new SelectList(new[]
+            {
+                new { Value = "001", Text = "Regular" },
+                new { Value = "002", Text = "Contract" },
+                new { Value = "003", Text = "Daily Wager" }
+            }, "Value", "Text", employee.Type);
+
+            return View(employee);
+        }
+
+        private bool EmployeeExists(int id)
+        {
+            return _context.Employees.Any(e => e.Id == id);
+        }
+
         // GET: Employee/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -86,7 +169,7 @@ namespace EngineersTown.Controllers
             return View(employee);
         }
 
-        // POST: Employee/Delete/5
+        // POST: Employee/Delete/5 (Soft Delete)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -94,10 +177,25 @@ namespace EngineersTown.Controllers
             var employee = await _context.Employees.FindAsync(id);
             if (employee != null)
             {
-                _context.Employees.Remove(employee);
+                employee.HasLeft = true;
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Employee/Restore/5 (Reactivate Employee)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee != null)
+            {
+                employee.HasLeft = false;
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

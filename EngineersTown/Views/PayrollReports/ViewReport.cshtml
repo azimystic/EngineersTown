@@ -26,17 +26,17 @@
                     <!-- Navigation Tabs -->
                     <ul class="nav nav-tabs" id="reportTabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="regular-tab" data-toggle="tab" href="#regular" role="tab">
+                            <a class="nav-link active" id="regular-tab" data-bs-toggle="tab" href="#regular" role="tab">
                                 <i class="fas fa-user-tie"></i> Regular Employees (@Model.RegularEmployees.Sum(g => g.Count()))
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="contract-tab" data-toggle="tab" href="#contract" role="tab">
+                            <a class="nav-link" id="contract-tab" data-bs-toggle="tab" href="#contract" role="tab">
                                 <i class="fas fa-handshake"></i> Contract Employees (@Model.ContractEmployees.Sum(g => g.Count()))
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="daily-tab" data-toggle="tab" href="#daily" role="tab">
+                            <a class="nav-link" id="daily-tab" data-bs-toggle="tab" href="#daily" role="tab">
                                 <i class="fas fa-tools"></i> Daily Wage Employees (@Model.DailyWageEmployees.Sum(g => g.Count()))
                             </a>
                         </li>
@@ -290,17 +290,4 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Initialize DataTables for better viewing
-            $('.table').DataTable({
-                "paging": false,
-                "searching": false,
-                "info": false,
-                "ordering": false,
-                "scrollX": true
-            });
-        });
-    </script>
-}
+ 

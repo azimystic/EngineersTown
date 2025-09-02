@@ -22,6 +22,7 @@ namespace EngineersTown.Models
 
         [Required]
         public DateTime DOB { get; set; }
+         public bool HasLeft { get; set; } = false;
 
         [Required]
         public int DepartmentId { get; set; }

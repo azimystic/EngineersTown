@@ -1,0 +1,611 @@
+﻿@using EngineersTown.Controllers
+@model AttendanceReportViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance Report - @Model.MonthName</title>
+    <style>
+        @@page {
+            size: A4 landscape;
+            margin: 0.3in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 8px;
+            line-height: 1.1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #000;
+        }
+
+            .header h1 {
+                font-size: 16px;
+                margin-bottom: 3px;
+                font-weight: bold;
+            }
+
+            .header h2 {
+                font-size: 12px;
+                color: #333;
+                margin-bottom: 2px;
+            }
+
+            .header p {
+                font-size: 9px;
+                color: #666;
+            }
+
+        .section-header {
+            background-color: #000;
+            color: white;
+            padding: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            margin-top: 20px;
+            page-break-before: always;
+        }
+
+            .section-header:first-of-type {
+                page-break-before: avoid;
+            }
+
+        .department-header {
+            background-color: #f0f0f0;
+            padding: 4px 8px;
+            font-weight: bold;
+            border-left: 3px solid #007bff;
+            margin-top: 10px;
+            font-size: 9px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 7px;
+        }
+
+            .attendance-table th,
+            .attendance-table td {
+                border: 1px solid #ccc;
+                padding: 2px;
+                text-align: center;
+                vertical-align: middle;
+                height: 18px;
+            }
+
+            .attendance-table th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+                font-size: 7px;
+            }
+
+            .attendance-table .employee-info {
+                text-align: left;
+                font-weight: bold;
+                width: 120px;
+            }
+
+            .attendance-table .designation {
+                text-align: left;
+                width: 80px;
+            }
+
+        .day-header {
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            width: 15px;
+            height: 25px;
+            font-size: 6px;
+            padding: 1px;
+        }
+
+        .day-cell {
+            font-size: 6px;
+            width: 15px;
+            padding: 1px;
+        }
+
+        .status-p {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .status-a {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+        }
+
+        .status-l {
+            background-color: #fff3cd;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .status-off {
+            background-color: #dc3545;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-h {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            font-weight: bold;
+        }
+
+        .time-text {
+            font-size: 5px;
+            line-height: 1;
+        }
+
+        .summary-row {
+            background-color: #e9ecef;
+            font-weight: bold;
+            font-size: 8px;
+        }
+
+        .department-summary {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            border-top: 2px solid #007bff;
+        }
+
+        @@media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .stats-summary {
+            width: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="header">
+        <h1>THE COOPERATIVE ENGINEERS TOWN SOCIETY SECTOR A</h1>
+        <h2>Attendance Report for @Model.MonthName</h2>
+        <p>Generated on: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+
+    <!-- Regular Employees Section -->
+    @if (Model.RegularEmployees.Any())
+    {
+        <div class="section-header">
+            Regular Employees  - @Model.RegularEmployees.Sum(g => g.Count()) Employee(s)
+        </div>
+
+        @foreach (var departmentGroup in Model.RegularEmployees)
+        {
+            <div class="department-header">
+                @departmentGroup.Key Department (@departmentGroup.Count() Employee(s))
+            </div>
+
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="employee-info">Employee Name</th>
+                        <th rowspan="2" class="designation">Designation</th>
+                        @for (int day = 1; day <= Model.DaysInMonth; day++)
+                        {
+                            var currentDate = new DateTime(Model.Year, Model.Month, day);
+                            <th class="day-header">@day</th>
+                        }
+                        <th rowspan="2" class="stats-summary">P</th>
+                        <th rowspan="2" class="stats-summary">A</th>
+                        <th rowspan="2" class="stats-summary">L</th>
+                        <th rowspan="2" class="stats-summary">H</th>
+                        <th rowspan="2" class="stats-summary">OFF</th>
+                    </tr> 
+                </thead>
+                <tbody>
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        <tr>
+                            <td class="employee-info">@employee.EmployeeName</td>
+                            <td class="designation">@employee.DesignationName</td>
+                            @foreach (var attendance in employee.AttendanceData)
+                            {
+                                var cssClass = attendance.Status switch
+                                {
+                                    "P" => "status-p",
+                                    "A" => "status-a",
+                                    "L" => "status-l",
+                                    "OFF" => "status-off",
+                                    "H" => "status-h",
+                                    _ => ""
+                                };
+
+                                <td class="day-cell @cssClass" title="@attendance.Date.ToString("dd MMM")">
+                                    @if (attendance.Status == "H")
+                                    {
+                                        <div title="@attendance.HolidayName">H</div>
+                                    }
+                                    else if (attendance.Status == "OFF")
+                                    {
+                                        <div>OFF</div>
+                                    }
+                                    else if (attendance.Status == "P" || attendance.Status == "L")
+                                    {
+                                        <div>@attendance.Status</div>
+                                        @if (!string.IsNullOrEmpty(attendance.TimeIn) || !string.IsNullOrEmpty(attendance.TimeOut))
+                                        {
+                                            <div class="time-text">
+                                                @if (!string.IsNullOrEmpty(attendance.TimeIn))
+                                                {
+                                                    <div>@attendance.TimeIn</div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(attendance.TimeOut))
+                                                {
+                                                    <div>@attendance.TimeOut</div>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>@attendance.Status</div>
+                                    }
+                                </td>
+                            }
+                            <td class="stats-summary">@employee.PresentDays</td>
+                            <td class="stats-summary">@employee.AbsentDays</td>
+                            <td class="stats-summary">@employee.LateDays</td>
+                            <td class="stats-summary">@employee.HolidayDays</td>
+                            <td class="stats-summary">@employee.OffDays</td>
+                        </tr>
+                    }
+                    <tr class="department-summary">
+                        <td colspan="@(Model.DaysInMonth + 2)" class="employee-info">
+                            <strong>@departmentGroup.Key Department Summary</strong>
+                        </td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.PresentDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.LateDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.HolidayDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.OffDays)</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+
+    <!-- Contract Employees Section -->
+    @if (Model.ContractEmployees.Any())
+    {
+        <div class="section-header">
+            Contract Employees  - @Model.ContractEmployees.Sum(g => g.Count()) Employee(s)
+        </div>
+
+        @foreach (var departmentGroup in Model.ContractEmployees)
+        {
+            <div class="department-header">
+                @departmentGroup.Key Department (@departmentGroup.Count() Employee(s))
+            </div>
+
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="employee-info">Employee Name</th>
+                        <th rowspan="2" class="designation">Designation</th>
+                        @for (int day = 1; day <= Model.DaysInMonth; day++)
+                        {
+                            var currentDate = new DateTime(Model.Year, Model.Month, day);
+                            <th class="day-header">@day </th>
+                        }
+                        <th rowspan="2" class="stats-summary">P</th>
+                        <th rowspan="2" class="stats-summary">A</th>
+                        <th rowspan="2" class="stats-summary">L</th>
+                        <th rowspan="2" class="stats-summary">H</th>
+                        <th rowspan="2" class="stats-summary">OFF</th>
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        <tr>
+                            <td class="employee-info">@employee.EmployeeName</td>
+                            <td class="designation">@employee.DesignationName</td>
+                            @foreach (var attendance in employee.AttendanceData)
+                            {
+                                var cssClass = attendance.Status switch
+                                {
+                                    "P" => "status-p",
+                                    "A" => "status-a",
+                                    "L" => "status-l",
+                                    "OFF" => "status-off",
+                                    "H" => "status-h",
+                                    _ => ""
+                                };
+
+                                <td class="day-cell @cssClass" title="@attendance.Date.ToString("dd MMM")">
+                                    @if (attendance.Status == "H")
+                                    {
+                                        <div title="@attendance.HolidayName">H</div>
+                                    }
+                                    else if (attendance.Status == "OFF")
+                                    {
+                                        <div>OFF</div>
+                                    }
+                                    else if (attendance.Status == "P" || attendance.Status == "L")
+                                    {
+                                        <div>@attendance.Status</div>
+                                        @if (!string.IsNullOrEmpty(attendance.TimeIn) || !string.IsNullOrEmpty(attendance.TimeOut))
+                                        {
+                                            <div class="time-text">
+                                                @if (!string.IsNullOrEmpty(attendance.TimeIn))
+                                                {
+                                                    <div>@attendance.TimeIn</div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(attendance.TimeOut))
+                                                {
+                                                    <div>@attendance.TimeOut</div>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>@attendance.Status</div>
+                                    }
+                                </td>
+                            }
+                            <td class="stats-summary">@employee.PresentDays</td>
+                            <td class="stats-summary">@employee.AbsentDays</td>
+                            <td class="stats-summary">@employee.LateDays</td>
+                            <td class="stats-summary">@employee.HolidayDays</td>
+                            <td class="stats-summary">@employee.OffDays</td>
+                        </tr>
+                    }
+                    <tr class="department-summary">
+                        <td colspan="@(Model.DaysInMonth + 2)" class="employee-info">
+                            <strong>@departmentGroup.Key Department Summary</strong>
+                        </td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.PresentDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.LateDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.HolidayDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.OffDays)</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+
+    <!-- Daily Wage Employees Section -->
+    @if (Model.DailyWageEmployees.Any())
+    {
+        <div class="section-header">
+            Daily Wager Employees - @Model.DailyWageEmployees.Sum(g => g.Count()) Employee(s)
+        </div>
+
+        @foreach (var departmentGroup in Model.DailyWageEmployees)
+        {
+            <div class="department-header">
+                @departmentGroup.Key Department (@departmentGroup.Count() Employee(s))
+            </div>
+
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="employee-info">Employee Name</th>
+                        <th rowspan="2" class="designation">Designation</th>
+                        @for (int day = 1; day <= Model.DaysInMonth; day++)
+                        {
+                            var currentDate = new DateTime(Model.Year, Model.Month, day);
+                            <th class="day-header">@day </th>
+                        }
+                        <th rowspan="2" class="stats-summary">P</th>
+                        <th rowspan="2" class="stats-summary">A</th>
+                        <th rowspan="2" class="stats-summary">L</th>
+                        <th rowspan="2" class="stats-summary">H</th>
+                        <th rowspan="2" class="stats-summary">OFF</th>
+                    </tr>
+                    <tr>
+                        @for (int day = 1; day <= Model.DaysInMonth; day++)
+                        {
+                            var currentDate = new DateTime(Model.Year, Model.Month, day);
+                            <th class="day-header" style="font-size: 5px;">@currentDate.Day</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        <tr>
+                            <td class="employee-info">@employee.EmployeeName</td>
+                            <td class="designation">@employee.DesignationName</td>
+                            @foreach (var attendance in employee.AttendanceData)
+                            {
+                                var cssClass = attendance.Status switch
+                                {
+                                    "P" => "status-p",
+                                    "A" => "status-a",
+                                    "L" => "status-l",
+                                    "OFF" => "status-off",
+                                    "H" => "status-h",
+                                    _ => ""
+                                };
+
+                                <td class="day-cell @cssClass" title="@attendance.Date.ToString("dd MMM")">
+                                    @if (attendance.Status == "H")
+                                    {
+                                        <div title="@attendance.HolidayName">H</div>
+                                    }
+                                    else if (attendance.Status == "OFF")
+                                    {
+                                        <div>OFF</div>
+                                    }
+                                    else if (attendance.Status == "P" || attendance.Status == "L")
+                                    {
+                                        <div>@attendance.Status</div>
+                                        @if (!string.IsNullOrEmpty(attendance.TimeIn) || !string.IsNullOrEmpty(attendance.TimeOut))
+                                        {
+                                            <div class="time-text">
+                                                @if (!string.IsNullOrEmpty(attendance.TimeIn))
+                                                {
+                                                    <div>@attendance.TimeIn</div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(attendance.TimeOut))
+                                                {
+                                                    <div>@attendance.TimeOut</div>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>@attendance.Status</div>
+                                    }
+                                </td>
+                            }
+                            <td class="stats-summary">@employee.PresentDays</td>
+                            <td class="stats-summary">@employee.AbsentDays</td>
+                            <td class="stats-summary">@employee.LateDays</td>
+                            <td class="stats-summary">@employee.HolidayDays</td>
+                            <td class="stats-summary">@employee.OffDays</td>
+                        </tr>
+                    }
+                    <tr class="department-summary">
+                        <td colspan="@(Model.DaysInMonth + 2)" class="employee-info">
+                            <strong>@departmentGroup.Key Department Summary</strong>
+                        </td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.PresentDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.LateDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.HolidayDays)</strong></td>
+                        <td class="stats-summary"><strong>@departmentGroup.Sum(e => e.OffDays)</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    }
+
+    <!-- Grand Summary -->
+    <div class="section-header" style="margin-top: 30px;">
+        ATTENDANCE SUMMARY - ALL EMPLOYEES (@Model.MonthName)
+    </div>
+
+    <table class="attendance-table" style="width: 70%; margin: 20px auto;">
+        <thead>
+            <tr>
+                <th style="width: 200px;">Employee Type</th>
+                <th style="width: 80px;">Count</th>
+                <th style="width: 80px;">Present Days</th>
+                <th style="width: 80px;">Absent Days</th>
+                <th style="width: 80px;">Late Days</th>
+                <th style="width: 80px;">Holiday Days</th>
+                <th style="width: 80px;">Off Days</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="employee-info">Regular Employees (001)</td>
+                <td class="stats-summary">@Model.RegularEmployees.Sum(g => g.Count())</td>
+                <td class="stats-summary">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.PresentDays)</td>
+                <td class="stats-summary">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</td>
+                <td class="stats-summary">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.LateDays)</td>
+                <td class="stats-summary">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.HolidayDays)</td>
+                <td class="stats-summary">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.OffDays)</td>
+            </tr>
+            <tr>
+                <td class="employee-info">Contract Employees (002)</td>
+                <td class="stats-summary">@Model.ContractEmployees.Sum(g => g.Count())</td>
+                <td class="stats-summary">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.PresentDays)</td>
+                <td class="stats-summary">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</td>
+                <td class="stats-summary">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.LateDays)</td>
+                <td class="stats-summary">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.HolidayDays)</td>
+                <td class="stats-summary">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.OffDays)</td>
+            </tr>
+            <tr>
+                <td class="employee-info">Daily Wage Employees (003)</td>
+                <td class="stats-summary">@Model.DailyWageEmployees.Sum(g => g.Count())</td>
+                <td class="stats-summary">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.PresentDays)</td>
+                <td class="stats-summary">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</td>
+                <td class="stats-summary">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.LateDays)</td>
+                <td class="stats-summary">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.HolidayDays)</td>
+                <td class="stats-summary">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.OffDays)</td>
+            </tr>
+            <tr class="summary-row">
+                <td class="employee-info"><strong>GRAND TOTAL</strong></td>
+                <td class="stats-summary"><strong>@((Model.RegularEmployees.Sum(g => g.Count()) + Model.ContractEmployees.Sum(g => g.Count()) + Model.DailyWageEmployees.Sum(g => g.Count())))</strong></td>
+                <td class="stats-summary"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.PresentDays) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.PresentDays) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.PresentDays)))</strong></td>
+                <td class="stats-summary"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDays) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.AbsentDays) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)))</strong></td>
+                <td class="stats-summary"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.LateDays) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.LateDays) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.LateDays)))</strong></td>
+                <td class="stats-summary"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.HolidayDays) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.HolidayDays) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.HolidayDays)))</strong></td>
+                <td class="stats-summary"><strong>@((Model.RegularEmployees.SelectMany(g => g).Sum(e => e.OffDays) + Model.ContractEmployees.SelectMany(g => g).Sum(e => e.OffDays) + Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.OffDays)))</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Legend -->
+    <div style="margin-top: 30px; text-align: center;">
+        <h4 style="font-size: 10px; margin-bottom: 10px;">LEGEND</h4>
+        <div style="display: inline-block; text-align: left; font-size: 8px;">
+            <div style="margin: 2px 0;">
+                <span class="day-cell status-p" style="display: inline-block; width: 20px; height: 15px; margin-right: 5px;"></span>
+                <strong>P</strong> = Present (with Time In/Out)
+            </div>
+            <div style="margin: 2px 0;">
+                <span class="day-cell status-a" style="display: inline-block; width: 20px; height: 15px; margin-right: 5px;"></span>
+                <strong>A</strong> = Absent
+            </div>
+            <div style="margin: 2px 0;">
+                <span class="day-cell status-l" style="display: inline-block; width: 20px; height: 15px; margin-right: 5px;"></span>
+                <strong>L</strong> = Late (with Time In/Out)
+            </div>
+            <div style="margin: 2px 0;">
+                <span class="day-cell status-h" style="display: inline-block; width: 20px; height: 15px; margin-right: 5px;"></span>
+                <strong>H</strong> = Holiday (Custom Holiday from Calendar)
+            </div>
+            <div style="margin: 2px 0;">
+                <span class="day-cell status-off" style="display: inline-block; width: 20px; height: 15px; margin-right: 5px;"></span>
+                <strong>OFF</strong> = Off Day (Weekend)
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; text-align: center; font-size: 8px; color: #666;">
+        <hr style="width: 50%; margin: 15px auto;" />
+        <p><strong>Generated by Engineers Town Attendance System</strong></p>
+        <p>Report Date: @DateTime.Now.ToString("dd MMMM yyyy HH:mm")</p>
+        <p>This is a system generated report and does not require signature</p>
+        <p style="margin-top: 10px; font-size: 7px;">
+            For each employee: P = Present with Time In/Out, A = Absent, L = Late with Time In/Out<br />
+            H = Holiday (hover to see holiday name), OFF = Official Off Day
+        </p>
+    </div>
+</body>
+</html>

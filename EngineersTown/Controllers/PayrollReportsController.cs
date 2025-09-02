@@ -330,7 +330,7 @@ namespace EngineersTown.Controllers
             // Calculate absent deductions
             if (report.TotalWorkingDays > 0)
             {
-                var dailySalary = report.GrossSalary / report.TotalWorkingDays;
+                var dailySalary = report.GrossSalary / DateTime.DaysInMonth(report.Year, report.Month);
                 report.AbsentDeductions = Math.Round(dailySalary * (report.AbsentDays + report.LateDays), 2);
             }
 
