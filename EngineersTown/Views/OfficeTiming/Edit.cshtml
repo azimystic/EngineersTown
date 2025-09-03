@@ -1,0 +1,80 @@
+@model OfficeTiming
+
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
+            <h2 class="text-xl font-semibold flex items-center">
+                <i class="fas fa-clock mr-3"></i>
+                Edit Office Timing
+            </h2>
+        </div>
+
+        <div class="p-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-red-600 mb-4"></div>
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="mb-6">
+                    <label asp-for="DayOfWeek" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                    <select asp-for="DayOfWeek" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" disabled>
+                        <option value="0" selected="@(Model.DayOfWeek == DayOfWeek.Sunday)">Sunday</option>
+                        <option value="1" selected="@(Model.DayOfWeek == DayOfWeek.Monday)">Monday</option>
+                        <option value="2" selected="@(Model.DayOfWeek == DayOfWeek.Tuesday)">Tuesday</option>
+                        <option value="3" selected="@(Model.DayOfWeek == DayOfWeek.Wednesday)">Wednesday</option>
+                        <option value="4" selected="@(Model.DayOfWeek == DayOfWeek.Thursday)">Thursday</option>
+                        <option value="5" selected="@(Model.DayOfWeek == DayOfWeek.Friday)">Friday</option>
+                        <option value="6" selected="@(Model.DayOfWeek == DayOfWeek.Saturday)">Saturday</option>
+                    </select>
+                    <input type="hidden" asp-for="DayOfWeek" />
+                    <span asp-validation-for="DayOfWeek" class="text-red-600 text-sm mt-1 block"></span>
+                </div>
+
+                <div class="mb-6 flex items-center">
+                    <label class="flex items-center">
+                        <input asp-for="IsOffDay" type="checkbox" class="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50" />
+                        <span class="ml-2 text-sm font-medium text-gray-700">This is an off day</span>
+                    </label>
+                </div>
+
+                <div id="timingFields" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label asp-for="StartTime" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                        <input asp-for="StartTime" type="time" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+                        <span asp-validation-for="StartTime" class="text-red-600 text-sm mt-1 block"></span>
+                    </div>
+                    
+                    <div>
+                        <label asp-for="EndTime" class="block text-sm font-medium text-gray-700 mb-2"></label>
+                        <input asp-for="EndTime" type="time" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+                        <span asp-validation-for="EndTime" class="text-red-600 text-sm mt-1 block"></span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <input type="submit" value="Save Changes" class="px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200" />
+                    <a asp-action="Index" class="px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            function toggleTimingFields() {
+                var isOffDay = $('#IsOffDay').is(':checked');
+                if (isOffDay) {
+                    $('#timingFields').addClass('opacity-50 pointer-events-none');
+                    $('#StartTime, #EndTime').prop('disabled', true);
+                } else {
+                    $('#timingFields').removeClass('opacity-50 pointer-events-none');
+                    $('#StartTime, #EndTime').prop('disabled', false);
+                }
+            }
+
+            $('#IsOffDay').change(toggleTimingFields);
+            toggleTimingFields(); // Initialize on page load
+        });
+    </script>
+}
