@@ -1,115 +1,119 @@
 ﻿@model IEnumerable<EngineersTown.Models.Employee>
 
-<div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
-            <h1 class="text-2xl font-semibold flex items-center">
-                <i class="fas fa-users mr-3"></i>
-                Employee Management
-            </h1>
-        </div>
+@{
+    ViewData["Title"] = "Employee Management";
+}
 
-        <div class="p-6">
-            <!-- Actions and Filters -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <a asp-action="Create" class="px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 flex items-center">
-                    <i class="fas fa-plus mr-2"></i> Add Employee
-                </a>
-
-                <div class="flex rounded-md overflow-hidden border border-gray-300">
-                    <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-150 employee-filter active" data-status="all">
-                        All Employees
-                    </button>
-                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border-l border-gray-300 transition-colors duration-150 employee-filter" data-status="active">
-                        Active
-                    </button>
-                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border-l border-gray-300 transition-colors duration-150 employee-filter" data-status="left">
-                        Left
-                    </button>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary bg-gradient text-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            Employee Management
+                        </h3>
+                        <a asp-action="Create" class="btn btn-light">
+                            <i class="fas fa-plus me-1"></i> Add Employee
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Employee Table -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table id="employeeTable" class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ZkedID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CNIC</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Birth Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contract Expiry</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach (var item in Model)
-                            {
-                                <tr class="hover:bg-gray-50 transition-colors duration-150" data-status="@(item.HasLeft ? "left" : "active")">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">@item.Name</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.ZkedID</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.CNIC</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.DOB.ToString("yyyy-MM-dd")</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@item.Department?.Name</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@item.Designation?.Name</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if (item.Type == "001")
-                                        {
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Regular</span>
-                                        }
-                                        else if (item.Type == "002")
-                                        {
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Contract</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Daily Wager</span>
-                                        }
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@(item.ContractExpiryDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if (item.HasLeft)
-                                        {
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Left</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                                        }
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                        <div class="flex space-x-2">
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            @if (item.HasLeft)
+                <div class="card-body">
+                    <!-- Filters -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="statusFilter" id="all" value="all" checked>
+                            <label class="btn btn-outline-primary" for="all">All Employees</label>
+
+                            <input type="radio" class="btn-check" name="statusFilter" id="active" value="active">
+                            <label class="btn btn-outline-primary" for="active">Active</label>
+
+                            <input type="radio" class="btn-check" name="statusFilter" id="left" value="left">
+                            <label class="btn btn-outline-primary" for="left">Left</label>
+                        </div>
+                    </div>
+
+                    <div class="rounded-3">
+                        <table id="employeeTable" class="table table-striped table-hover" style="width:100%">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>ZkedID</th>
+                                    <th>CNIC</th>
+                                    <th>Birth Date</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Type</th>
+                                    <th>Contract Expiry</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr data-status="@(item.HasLeft ? "left" : "active")">
+                                        <td class="fw-semibold">@item.Name</td>
+                                        <td>@item.ZkedID</td>
+                                        <td>@item.CNIC</td>
+                                        <td>@item.DOB.ToString("yyyy-MM-dd")</td>
+                                        <td>@item.Department?.Name</td>
+                                        <td>@item.Designation?.Name</td>
+                                        <td>
+                                            @if (item.Type == "001")
                                             {
-                                                <form asp-action="Restore" asp-route-id="@item.Id" method="post" class="inline">
-                                                    <button type="submit" class="text-green-600 hover:text-green-900 font-medium" title="Reactivate Employee">
-                                                        <i class="fas fa-user-check"></i>
-                                                    </button>
-                                                </form>
+                                                <span class="badge bg-success">Regular</span>
+                                            }
+                                            else if (item.Type == "002")
+                                            {
+                                                <span class="badge bg-info">Contract</span>
                                             }
                                             else
                                             {
-                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="inline">
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium" title="Mark as Left">
-                                                        <i class="fas fa-user-times"></i>
-                                                    </button>
-                                                </form>
+                                                <span class="badge bg-warning text-dark">Daily Wager</span>
                                             }
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td>@(item.ContractExpiryDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                                        <td>
+                                            @if (item.HasLeft)
+                                            {
+                                                <span class="badge bg-secondary">Left</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                @if (item.HasLeft)
+                                                {
+                                                    <form asp-action="Restore" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                        <button type="submit" class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Reactivate Employee">
+                                                            <i class="fas fa-user-check"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Mark as Left">
+                                                            <i class="fas fa-user-times"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,35 +121,54 @@
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         $(document).ready(function() {
             var table = $('#employeeTable').DataTable({
-                responsive: true,
-                columnDefs: [
-                    { orderable: false, targets: [9] },
-                    { searchable: false, targets: [9] }
-                ],
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search employees..."
+                "pageLength": 10,
+                "lengthMenu": [10, 25, 50, 100],
+                "order": [[0, "asc"]],
+                "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                "language": {
+                    "search": "<i class='fas fa-search'></i>",
+                    "searchPlaceholder": "Search employees...",
+                    "lengthMenu": "Show _MENU_ entries",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "paginate": {
+                        "previous": "<i class='fas fa-chevron-left'></i>",
+                        "next": "<i class='fas fa-chevron-right'></i>"
+                    }
                 },
-                dom: '<"flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4"<"mb-4 sm:mb-0"l><"sm:ml-auto"f>>t<"flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4"<"mb-4 sm:mb-0"i><"sm:ml-auto"p>>'
+                "columnDefs": [
+                    { "orderable": false, "targets": 9 } // Disable sorting on Actions column
+                ],
+                "initComplete": function() {
+                    // Add custom CSS after table initialization
+                    $('.dataTables_filter input').addClass('form-control');
+                    $('.dataTables_length select').addClass('form-select');
+                }
             });
 
             // Filter buttons functionality
-            $('.employee-filter').on('click', function() {
-                var status = $(this).data('status');
-
-                // Update button states
-                $('.employee-filter').removeClass('active bg-primary-600 text-white').addClass('bg-white text-gray-700');
-                $(this).removeClass('bg-white text-gray-700').addClass('active bg-primary-600 text-white');
+            $('input[name="statusFilter"]').on('change', function() {
+                var status = $(this).val();
 
                 if (status === 'all') {
-                    table.columns().search('').draw();
-                } else {
-                    // Filter by status
-                    table.column(8).search(status === 'active' ? '^Active$' : '^Left$', true, false).draw();
+                    table.column(8).search('').draw();
+                } else if (status === 'active') {
+                    table.column(8).search('^Active$', true, false).draw();
+                } else if (status === 'left') {
+                    table.column(8).search('^Left$', true, false).draw();
                 }
+            });
+
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
             });
 
             // Add confirmation to delete/restore actions
@@ -157,4 +180,72 @@
             });
         });
     </script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+        }
+
+        .card-header {
+            border-radius: 0.75rem 0.75rem 0 0 !important;
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 1rem 0.75rem;
+        }
+
+        .table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .btn {
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+            .btn:hover {
+                transform: translateY(-2px);
+            }
+
+        .badge {
+            font-size: 0.75em;
+            padding: 0.5em 0.75em;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.5rem 0.75rem;
+            margin-left: 0.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+                background: #0d6efd;
+                color: white !important;
+                border: 1px solid #0d6efd;
+            }
+
+            .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+                background: #0d6efd;
+                color: white !important;
+                border: 1px solid #0d6efd;
+            }
+    </style>
 }
