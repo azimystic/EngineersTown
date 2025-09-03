@@ -4,35 +4,41 @@
     ViewData["Title"] = "Create Salary Definition";
 }
 
-<h1>Create Salary Definition</h1>
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
+            <h1 class="text-xl font-semibold flex items-center">
+                <i class="fas fa-money-bill-wave mr-3"></i>
+                Create Salary Definition
+            </h1>
+        </div>
 
-<hr />
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="p-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-red-600 mb-4"></div>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="control-label">Select Employee</label>
-                        <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.Employees">
-                            <option value="">-- Select Employee --</option>
-                        </select>
-                        <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                <div class="mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Employee</label>
+                            <select asp-for="EmployeeId" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" asp-items="ViewBag.Employees">
+                                <option value="">-- Select Employee --</option>
+                            </select>
+                            <span asp-validation-for="EmployeeId" class="text-red-600 text-sm mt-1 block"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="salaryFields" class="mt-4">
-                <!-- Fields will be dynamically loaded based on employee type -->
-            </div>
+                <div id="salaryFields" class="mb-6">
+                    <!-- Fields will be dynamically loaded based on employee type -->
+                </div>
 
-            <div class="form-group mt-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-            </div>
-        </form>
+                <div class="flex items-center space-x-4">
+                    <input type="submit" value="Create" class="px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200" />
+                    <a asp-action="Index" class="px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200">Back to List</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
