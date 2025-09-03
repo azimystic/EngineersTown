@@ -1,8 +1,152 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="max-w-7xl mx-auto">
+    <!-- Welcome Header -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-8 rounded-t-lg">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold mb-2">Welcome to Engineers Town</h1>
+                <p class="text-primary-100 text-lg">Attendance Management System</p>
+            </div>
+        </div>
+        
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Quick Stats Cards -->
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-medium">Today's</p>
+                            <p class="text-2xl font-bold">Attendance</p>
+                        </div>
+                        <div class="text-blue-200">
+                            <i class="fas fa-clock text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "Attendance")" class="text-blue-100 hover:text-white text-sm font-medium underline">
+                            View Details →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium">Generate</p>
+                            <p class="text-2xl font-bold">Reports</p>
+                        </div>
+                        <div class="text-green-200">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "AttendanceReport")" class="text-green-100 hover:text-white text-sm font-medium underline">
+                            View Reports →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-100 text-sm font-medium">Manage</p>
+                            <p class="text-2xl font-bold">Employees</p>
+                        </div>
+                        <div class="text-purple-200">
+                            <i class="fas fa-users text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "Employee")" class="text-purple-100 hover:text-white text-sm font-medium underline">
+                            Manage →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-orange-100 text-sm font-medium">Process</p>
+                            <p class="text-2xl font-bold">Payroll</p>
+                        </div>
+                        <div class="text-orange-200">
+                            <i class="fas fa-money-bill-wave text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="@Url.Action("Index", "PayrollReports")" class="text-orange-100 hover:text-white text-sm font-medium underline">
+                            Process →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- System Overview -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-tachometer-alt mr-2 text-primary-600"></i>
+                System Overview
+            </h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                    <span class="text-gray-700 font-medium">Current Date & Time</span>
+                    <span class="text-gray-900 font-semibold">@DateTime.Now.ToString("MMM dd, yyyy HH:mm")</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                    <span class="text-gray-700 font-medium">System Status</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">Active</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                    <span class="text-gray-700 font-medium">Current Month</span>
+                    <span class="text-gray-900 font-semibold">@DateTime.Now.ToString("MMMM yyyy")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-history mr-2 text-primary-600"></i>
+                Quick Actions
+            </h2>
+            <div class="space-y-3">
+                <a href="@Url.Action("Index", "Attendance")" class="block p-3 bg-blue-50 hover:bg-blue-100 rounded-md border border-blue-200 transition-colors duration-150">
+                    <div class="flex items-center">
+                        <i class="fas fa-clock text-blue-600 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-blue-900">View Today's Attendance</p>
+                            <p class="text-sm text-blue-600">Check current attendance status</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="@Url.Action("Index", "Employee")" class="block p-3 bg-purple-50 hover:bg-purple-100 rounded-md border border-purple-200 transition-colors duration-150">
+                    <div class="flex items-center">
+                        <i class="fas fa-user-plus text-purple-600 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-purple-900">Manage Employees</p>
+                            <p class="text-sm text-purple-600">Add, edit, or view employee records</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="@Url.Action("Index", "Department")" class="block p-3 bg-green-50 hover:bg-green-100 rounded-md border border-green-200 transition-colors duration-150">
+                    <div class="flex items-center">
+                        <i class="fas fa-sitemap text-green-600 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-green-900">Departments</p>
+                            <p class="text-sm text-green-600">Manage organizational structure</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

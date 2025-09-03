@@ -1,6 +1,42 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
+            <h1 class="text-2xl font-semibold flex items-center">
+                <i class="fas fa-shield-alt mr-3"></i>
+                @ViewData["Title"]
+            </h1>
+        </div>
+        
+        <div class="p-6">
+            <div class="prose max-w-none text-gray-700">
+                <p class="text-lg mb-4">This page details Engineers Town Attendance System's privacy policy and data handling practices.</p>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                This system is designed to maintain employee attendance records securely and efficiently.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-xl font-semibold mb-3 text-gray-900">Data Collection</h2>
+                <p class="mb-4">We collect employee information including names, identification numbers, attendance records, and related organizational data necessary for payroll and attendance management.</p>
+
+                <h2 class="text-xl font-semibold mb-3 text-gray-900">Data Security</h2>
+                <p class="mb-4">All employee data is stored securely and access is restricted to authorized personnel only. We maintain appropriate technical and organizational security measures.</p>
+
+                <h2 class="text-xl font-semibold mb-3 text-gray-900">Contact</h2>
+                <p>For any privacy-related questions, please contact the system administrator.</p>
+            </div>
+        </div>
+    </div>
+</div>
