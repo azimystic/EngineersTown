@@ -1,97 +1,105 @@
 ﻿@model IEnumerable<EngineersTown.Models.Employee>
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col">
-            <h2 class="mb-4">Employee Management</h2>
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
+            <h1 class="text-2xl font-semibold flex items-center">
+                <i class="fas fa-users mr-3"></i>
+                Employee Management
+            </h1>
+        </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <a asp-action="Create" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create New
+        <div class="p-6">
+            <!-- Actions and Filters -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <a asp-action="Create" class="px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Add Employee
                 </a>
 
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-primary active" data-status="all">
+                <div class="flex rounded-md overflow-hidden border border-gray-300">
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 transition-colors duration-150 employee-filter active" data-status="all">
                         All Employees
                     </button>
-                    <button type="button" class="btn btn-outline-success" data-status="active">
-                        Active Employees
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border-l border-gray-300 transition-colors duration-150 employee-filter" data-status="active">
+                        Active
                     </button>
-                    <button type="button" class="btn btn-outline-secondary" data-status="left">
-                        Left Employees
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border-l border-gray-300 transition-colors duration-150 employee-filter" data-status="left">
+                        Left
                     </button>
                 </div>
             </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <table id="employeeTable" class="table table-striped table-hover w-100">
-                        <thead>
+            <!-- Employee Table -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table id="employeeTable" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th>Name</th>
-                                <th>ZkedID</th>
-                                <th>CNIC</th>
-                                <th>Date of Birth</th>
-                                <th>Department</th>
-                                <th>Designation</th>
-                                <th>Type</th>
-                                <th>Contract Expiry</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ZkedID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CNIC</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Birth Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contract Expiry</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="bg-white divide-y divide-gray-200">
                             @foreach (var item in Model)
                             {
-                                <tr data-status="@(item.HasLeft ? "left" : "active")">
-                                    <td>@item.Name</td>
-                                    <td>@item.ZkedID</td>
-                                    <td>@item.CNIC</td>
-                                    <td>@item.DOB.ToString("yyyy-MM-dd")</td>
-                                    <td>@item.Department?.Name</td>
-                                    <td>@item.Designation?.Name</td>
-                                    <td>
+                                <tr class="hover:bg-gray-50 transition-colors duration-150" data-status="@(item.HasLeft ? "left" : "active")">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">@item.Name</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.ZkedID</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.CNIC</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@item.DOB.ToString("yyyy-MM-dd")</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@item.Department?.Name</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@item.Designation?.Name</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         @if (item.Type == "001")
                                         {
-                                            <span class="badge bg-success">Regular</span>
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Regular</span>
                                         }
                                         else if (item.Type == "002")
                                         {
-                                            <span class="badge bg-info">Contract</span>
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Contract</span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-warning">Daily Wager</span>
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Daily Wager</span>
                                         }
                                     </td>
-                                    <td>@(item.ContractExpiryDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
-                                    <td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@(item.ContractExpiryDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         @if (item.HasLeft)
                                         {
-                                            <span class="badge bg-secondary">Left</span>
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Left</span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-success">Active</span>
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
                                         }
                                     </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        <div class="flex space-x-2">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-900 font-medium">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             @if (item.HasLeft)
                                             {
-                                                <form asp-action="Restore" asp-route-id="@item.Id" method="post" class="d-inline">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Reactivate Employee">
+                                                <form asp-action="Restore" asp-route-id="@item.Id" method="post" class="inline">
+                                                    <button type="submit" class="text-green-600 hover:text-green-900 font-medium" title="Reactivate Employee">
                                                         <i class="fas fa-user-check"></i>
                                                     </button>
                                                 </form>
                                             }
                                             else
                                             {
-                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Mark as Left">
+                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="inline">
+                                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium" title="Mark as Left">
                                                         <i class="fas fa-user-times"></i>
                                                     </button>
                                                 </form>
@@ -109,7 +117,6 @@
 </div>
 
 @section Scripts {
-
     <script>
         $(document).ready(function() {
             var table = $('#employeeTable').DataTable({
@@ -122,16 +129,16 @@
                     search: "_INPUT_",
                     searchPlaceholder: "Search employees..."
                 },
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rt<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>'
+                dom: '<"flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4"<"mb-4 sm:mb-0"l><"sm:ml-auto"f>>t<"flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4"<"mb-4 sm:mb-0"i><"sm:ml-auto"p>>'
             });
 
             // Filter buttons functionality
-            $('[data-status]').on('click', function() {
+            $('.employee-filter').on('click', function() {
                 var status = $(this).data('status');
 
                 // Update button states
-                $('[data-status]').removeClass('active');
-                $(this).addClass('active');
+                $('.employee-filter').removeClass('active bg-primary-600 text-white').addClass('bg-white text-gray-700');
+                $(this).removeClass('bg-white text-gray-700').addClass('active bg-primary-600 text-white');
 
                 if (status === 'all') {
                     table.columns().search('').draw();
@@ -150,35 +157,4 @@
             });
         });
     </script>
-
-    <style>
-        .card {
-            border: none;
-            border-radius: 12px;
-        }
-
-        .dataTables_filter input {
-            border-radius: 20px;
-            padding: 5px 15px;
-            border: 1px solid #ddd;
-        }
-
-        .btn {
-            border-radius: 6px;
-        }
-
-        table {
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-
-        tr:hover {
-            background-color: rgba(0, 123, 255, 0.05) !important;
-        }
-    </style>
 }
