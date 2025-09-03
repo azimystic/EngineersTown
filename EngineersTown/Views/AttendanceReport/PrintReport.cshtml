@@ -11,9 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Attendance Report - @Model.MonthName</title>
     <style>
-        @page {
+        @@page {
             size: A4 landscape;
-            margin: 0.5in;
+            margin: 0.3in;
         }
 
         * {
@@ -23,185 +23,155 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 8px;
-            line-height: 1.2;
-            color: #333;
+            line-height: 1.1;
         }
 
-        .report-header {
+        .header {
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #2563eb;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #000;
         }
 
-        .report-header h1 {
-            font-size: 18px;
-            font-weight: bold;
-            color: #1e40af;
-            margin-bottom: 5px;
-        }
+            .header h1 {
+                font-size: 16px;
+                margin-bottom: 3px;
+                font-weight: bold;
+            }
 
-        .report-header h2 {
-            font-size: 14px;
-            color: #4b5563;
-            margin-bottom: 3px;
-        }
+            .header h2 {
+                font-size: 12px;
+                color: #333;
+                margin-bottom: 2px;
+            }
 
-        .report-header p {
-            font-size: 10px;
-            color: #6b7280;
-        }
+            .header p {
+                font-size: 9px;
+                color: #666;
+            }
 
         .section-header {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
+            background-color: #000;
             color: white;
-            padding: 8px 12px;
+            padding: 6px;
             text-align: center;
             font-weight: bold;
-            font-size: 11px;
-            margin: 25px 0 15px 0;
-            border-radius: 3px;
+            font-size: 10px;
+            margin-top: 20px;
             page-break-before: always;
         }
 
-        .section-header:first-of-type {
-            page-break-before: avoid;
-        }
+            .section-header:first-of-type {
+                page-break-before: avoid;
+            }
 
         .department-header {
-            background-color: #f3f4f6;
-            padding: 6px 10px;
+            background-color: #f0f0f0;
+            padding: 4px 8px;
             font-weight: bold;
-            border-left: 4px solid #2563eb;
-            margin: 15px 0 10px 0;
-            font-size: 10px;
-            color: #374151;
+            border-left: 3px solid #007bff;
+            margin-top: 10px;
+            font-size: 9px;
         }
 
         .attendance-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 7px;
-            background: white;
-            border-radius: 3px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
-        .attendance-table th {
-            background: linear-gradient(135deg, #374151, #4b5563);
-            color: white;
-            font-weight: bold;
-            font-size: 7px;
-            padding: 4px 2px;
-            text-align: center;
-            border: 1px solid #d1d5db;
-        }
+            .attendance-table th,
+            .attendance-table td {
+                border: 1px solid #ccc;
+                padding: 2px;
+                text-align: center;
+                vertical-align: middle;
+                height: 18px;
+            }
 
-        .attendance-table td {
-            border: 1px solid #e5e7eb;
-            padding: 2px;
-            text-align: center;
-            vertical-align: middle;
-            height: 20px;
-        }
+            .attendance-table th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+                font-size: 7px;
+            }
 
-        .attendance-table .employee-info {
-            text-align: left;
-            font-weight: bold;
-            width: 120px;
-            background-color: #f9fafb;
-        }
+            .attendance-table .employee-info {
+                text-align: left;
+                font-weight: bold;
+                width: 120px;
+            }
 
-        .attendance-table .designation {
-            text-align: left;
-            width: 80px;
-            background-color: #f9fafb;
-        }
+            .attendance-table .designation {
+                text-align: left;
+                width: 80px;
+            }
 
         .day-header {
             writing-mode: vertical-lr;
             text-orientation: mixed;
-            width: 16px;
-            height: 28px;
+            width: 15px;
+            height: 25px;
             font-size: 6px;
-            padding: 2px 1px;
-            background: linear-gradient(135deg, #6b7280, #9ca3af);
-            color: white;
+            padding: 1px;
         }
 
         .day-cell {
             font-size: 6px;
-            width: 16px;
+            width: 15px;
             padding: 1px;
-            font-weight: 500;
         }
 
         .status-p {
-            background-color: #dcfce7;
-            color: #166534;
+            background-color: #d4edda;
+            color: #155724;
             font-weight: bold;
         }
 
         .status-a {
-            background-color: #fecaca;
-            color: #991b1b;
+            background-color: #f8d7da;
+            color: #721c24;
             font-weight: bold;
         }
 
         .status-l {
-            background-color: #fef3c7;
-            color: #92400e;
+            background-color: #fff3cd;
+            color: #856404;
             font-weight: bold;
         }
 
         .status-off {
-            background-color: #ef4444;
+            background-color: #dc3545;
             color: white;
             font-weight: bold;
         }
 
         .status-h {
-            background-color: #dbeafe;
-            color: #1e40af;
+            background-color: #d1ecf1;
+            color: #0c5460;
             font-weight: bold;
         }
 
         .time-text {
             font-size: 5px;
-            line-height: 1.1;
-            color: #6b7280;
+            line-height: 1;
         }
 
         .summary-row {
-            background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+            background-color: #e9ecef;
             font-weight: bold;
             font-size: 8px;
-            color: #374151;
         }
 
         .department-summary {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            background-color: #f8f9fa;
             font-weight: bold;
-            border-top: 3px solid #2563eb;
-            color: #1e40af;
+            border-top: 2px solid #007bff;
         }
 
-        .page-break {
-            page-break-after: always;
-        }
-
-        .stats-summary {
-            width: 35px;
-            text-align: center;
-            background-color: #f8fafc;
-            font-weight: 600;
-        }
-
-        @media print {
+        @@media print {
             .no-print {
                 display: none;
             }
@@ -211,10 +181,19 @@
                 print-color-adjust: exact;
             }
         }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .stats-summary {
+            width: 30px;
+            text-align: center;
+        }
     </style>
 </head>
 <body onload="window.print()">
-    <div class="report-header">
+    <div class="header">
         <h1>THE COOPERATIVE ENGINEERS TOWN SOCIETY SECTOR A</h1>
         <h2>Attendance Report for @Model.MonthName</h2>
         <p>Generated on: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
@@ -248,7 +227,7 @@
                         <th rowspan="2" class="stats-summary">L</th>
                         <th rowspan="2" class="stats-summary">H</th>
                         <th rowspan="2" class="stats-summary">OFF</th>
-                    </tr> 
+                    </tr>
                 </thead>
                 <tbody>
                     @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
@@ -351,7 +330,7 @@
                         <th rowspan="2" class="stats-summary">H</th>
                         <th rowspan="2" class="stats-summary">OFF</th>
                     </tr>
-                    
+
                 </thead>
                 <tbody>
                     @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
