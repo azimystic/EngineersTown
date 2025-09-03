@@ -1,227 +1,213 @@
 ﻿@model EngineersTown.Models.ViewModels.AttendanceViewModel
 @{
-    ViewData["Title"] = "Attendance Report";
+    ViewData["Title"] = "Daily Attendance";
 }
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary bg-gradient text-white py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0">
-                            <i class="fas fa-calendar-check me-2"></i>
-                            Daily Attendance Report
-                        </h3>
-                        
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-semibold flex items-center">
+                    <i class="fas fa-clock mr-3"></i>
+                    Daily Attendance Report
+                </h1>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <!-- Alert Messages -->
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span>@ViewBag.ErrorMessage</span>
+                    <button type="button" class="ml-auto text-red-400 hover:text-red-600" onclick="this.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>@TempData["SuccessMessage"]</span>
+                    <button type="button" class="ml-auto text-green-400 hover:text-green-600" onclick="this.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span>@TempData["ErrorMessage"]</span>
+                    <button type="button" class="ml-auto text-red-400 hover:text-red-600" onclick="this.parentElement.style.display='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            }
+
+            <!-- Filters -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-filter mr-2 text-gray-600"></i>
+                    Filters
+                </h2>
+                <form method="get" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                        <input type="date"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                               id="date"
+                               name="date"
+                               value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="departmentId" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" id="departmentId" name="departmentId">
+                            @foreach (var dept in Model.Departments)
+                            {
+                                <option value="@dept.Value" selected="@(dept.Value == Model.SelectedDepartmentId?.ToString())">
+                                    @dept.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">&nbsp;</label>
+                        <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center">
+                            <i class="fas fa-search mr-2"></i> Filter
+                        </button>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">&nbsp;</label>
+                        <form asp-action="ProcessAttendance" method="post" class="inline w-full">
+                            <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center" onclick="return confirm('Process attendance for today?')">
+                                <i class="fas fa-sync mr-2"></i> Process
+                            </button>
+                        </form>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium">Present</p>
+                            <p class="text-3xl font-bold">@Model.EmployeeAttendances.Count(e => e.Status == "Present")</p>
+                        </div>
+                        <div class="text-green-200">
+                            <i class="fas fa-user-check text-3xl"></i>
+                        </div>
                     </div>
                 </div>
-
-                <div class="card-body">
-                    @if (ViewBag.ErrorMessage != null)
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            @ViewBag.ErrorMessage
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                
+                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-red-100 text-sm font-medium">Absent</p>
+                            <p class="text-3xl font-bold">@Model.EmployeeAttendances.Count(e => e.Status == "Absent")</p>
                         </div>
-                    }
-
-                    @if (TempData["SuccessMessage"] != null)
-                    {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            @TempData["SuccessMessage"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
-
-                    @if (TempData["ErrorMessage"] != null)
-                    {
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            @TempData["ErrorMessage"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
-
-                    <!-- Filters -->
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-3 text-secondary">
-                                <i class="fas fa-filter me-2"></i>Filters
-                            </h5>
-                            <form method="get" class="mb-0">
-                                <div class="row g-3 align-items-end">
-                                    <div class="col-md-3">
-                                        <label for="date" class="form-label fw-semibold">Date</label>
-                                        <input type="date"
-                                               class="form-control border-primary"
-                                               id="date"
-                                               name="date"
-                                               value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="departmentId" class="form-label fw-semibold">Department</label>
-                                        <select class="form-select border-primary" id="departmentId" name="departmentId">
-                                            @foreach (var dept in Model.Departments)
-                                            {
-                                                <option value="@dept.Value" selected="@(dept.Value == Model.SelectedDepartmentId?.ToString())">
-                                                    @dept.Text
-                                                </option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="fas fa-search me-1"></i> Filter
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <form asp-action="ProcessAttendance" method="post" class="d-inline w-100">
-                                            <button type="submit" class="btn btn-success w-100" onclick="return confirm('Process attendance for today?')">
-                                                <i class="fas fa-sync me-1"></i> Process
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="text-red-200">
+                            <i class="fas fa-user-times text-3xl"></i>
                         </div>
                     </div>
-
-                    <!-- Summary -->
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="card info-card bg-success bg-gradient text-white shadow-sm mb-0 h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="card-info">
-                                                    <h6 class="card-title mb-0">Present</h6>
-                                                    <h2 class="fw-bold mt-2 mb-0">@Model.EmployeeAttendances.Count(e => e.Status == "Present")</h2>
-                                                </div>
-                                                <div class="card-icon align-self-center">
-                                                    <i class="fas fa-user-check fa-2x opacity-50"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card info-card bg-danger bg-gradient text-white shadow-sm mb-0 h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="card-info">
-                                                    <h6 class="card-title mb-0">Absent</h6>
-                                                    <h2 class="fw-bold mt-2 mb-0">@Model.EmployeeAttendances.Count(e => e.Status == "Absent")</h2>
-                                                </div>
-                                                <div class="card-icon align-self-center">
-                                                    <i class="fas fa-user-times fa-2x opacity-50"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card info-card bg-warning bg-gradient text-dark shadow-sm mb-0 h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="card-info">
-                                                    <h6 class="card-title mb-0">Late</h6>
-                                                    <h2 class="fw-bold mt-2 mb-0">@Model.EmployeeAttendances.Count(e => e.Status == "Late")</h2>
-                                                </div>
-                                                <div class="card-icon align-self-center">
-                                                    <i class="fas fa-clock fa-2x opacity-50"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card info-card bg-info bg-gradient text-white shadow-sm mb-0 h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="card-info">
-                                                    <h6 class="card-title mb-0">Total</h6>
-                                                    <h2 class="fw-bold mt-2 mb-0">@Model.EmployeeAttendances.Count</h2>
-                                                </div>
-                                                <div class="card-icon align-self-center">
-                                                    <i class="fas fa-users fa-2x opacity-50"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-yellow-100 text-sm font-medium">Late</p>
+                            <p class="text-3xl font-bold">@Model.EmployeeAttendances.Count(e => e.Status == "Late")</p>
+                        </div>
+                        <div class="text-yellow-200">
+                            <i class="fas fa-clock text-3xl"></i>
                         </div>
                     </div>
-
-                    <!-- Attendance Table -->
-                    <div class="card shadow-sm">
-                        <div class="card-body p-0">
-                            <div class="table rounded-3">
-                                <table class="table table-hover table-striped mb-0" id="attendanceTable">
-                                    <thead class="table-dark">
-                                        <tr>
-                                            <th class="ps-4">Sr#</th>
-                                            <th>Employee Name</th>
-                                            <th>Department</th>
-                                            <th>Designation</th>
-                                            <th>Time In</th>
-                                            <th>Time Out</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.EmployeeAttendances.Any())
-                                        {
-                                            @for (int i = 0; i < Model.EmployeeAttendances.Count; i++)
-                                            {
-                                                var employee = Model.EmployeeAttendances[i];
-                                                var rowClass = employee.Status switch
-                                                {
-                                                    "Present" => "table-success",
-                                                    "Absent" => "table-danger",
-                                                    "Late" => "table-warning",
-                                                    _ => ""
-                                                };
-
-                                                <tr class="@rowClass">
-                                                    <td class="ps-4 fw-semibold">@(i + 1)</td>
-                                                    <td class="fw-semibold">@employee.EmployeeName</td>
-                                                    <td>@employee.DepartmentName</td>
-                                                    <td>@employee.DesignationName</td>
-                                                    <td>@employee.TimeIn</td>
-                                                    <td>@employee.TimeOut</td>
-                                                    <td>
-                                                        <span class="badge rounded-pill @(employee.Status switch
-                                                              {
-                                                                  "Present" => "bg-success",
-                                                                  "Absent" => "bg-danger",
-                                                                  "Late" => "bg-warning text-dark",
-                                                                  _ => "bg-secondary"
-                                                              })">
-                                                    @employee.StatusDisplay
-                                                </span>
-                                            </td>
-                                        </tr>
-                                                                                }
-                                        }
-                                        else
-                                        {
-                                            <tr>
-                                                <td colspan="7" class="text-center py-4">
-                                                    <i class="fas fa-inbox fa-3x text-muted mb-2"></i>
-                                                    <h5 class="text-muted">No employees found</h5>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-sm p-6 text-white transform hover:scale-105 transition-transform duration-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-medium">Total</p>
+                            <p class="text-3xl font-bold">@Model.EmployeeAttendances.Count</p>
+                        </div>
+                        <div class="text-blue-200">
+                            <i class="fas fa-users text-3xl"></i>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" id="attendanceTable">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sr#</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time In</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Out</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @if (Model.EmployeeAttendances.Any())
+                            {
+                                @for (int i = 0; i < Model.EmployeeAttendances.Count; i++)
+                                {
+                                    var employee = Model.EmployeeAttendances[i];
+                                    var rowClass = employee.Status switch
+                                    {
+                                        "Present" => "bg-green-50 hover:bg-green-100",
+                                        "Absent" => "bg-red-50 hover:bg-red-100",
+                                        "Late" => "bg-yellow-50 hover:bg-yellow-100",
+                                        _ => "hover:bg-gray-50"
+                                    };
+
+                                    <tr class="@rowClass transition-colors duration-150">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@(i + 1)</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">@employee.EmployeeName</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@employee.DepartmentName</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@employee.DesignationName</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.TimeIn</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.TimeOut</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full @(employee.Status switch
+                                                  {
+                                                      "Present" => "bg-green-100 text-green-800",
+                                                      "Absent" => "bg-red-100 text-red-800",
+                                                      "Late" => "bg-yellow-100 text-yellow-800",
+                                                      _ => "bg-gray-100 text-gray-800"
+                                                  })">
+                                                @employee.StatusDisplay
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center">
+                                            <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
+                                            <p class="text-lg font-medium text-gray-600">No employees found</p>
+                                            <p class="text-sm text-gray-500">Try adjusting your filters</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -231,7 +217,7 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Initialize DataTable if you have it included
+            // Initialize DataTable if available
             if (typeof $.fn.DataTable !== 'undefined') {
                 $('#attendanceTable').DataTable({
                     "pageLength": 25,
@@ -242,92 +228,10 @@
                     "language": {
                         "search": "<i class='fas fa-search'></i>",
                         "searchPlaceholder": "Search records..."
-                    }
+                    },
+                    "dom": '<"flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4"<"mb-4 sm:mb-0"l><"sm:ml-auto"f>>t<"flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4"<"mb-4 sm:mb-0"i><"sm:ml-auto"p>>'
                 });
             }
-
-            // Add hover effects to cards
-            $('.info-card').hover(
-                function() {
-                    $(this).addClass('shadow');
-                    $(this).css('transform', 'translateY(-5px)');
-                },
-                function() {
-                    $(this).removeClass('shadow');
-                    $(this).css('transform', 'translateY(0)');
-                }
-            );
         });
     </script>
-
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .card {
-            border: none;
-            border-radius: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .card-header {
-            border-radius: 0.75rem 0.75rem 0 0 !important;
-        }
-
-        .info-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-        }
-
-            .info-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-            }
-
-        .table th {
-            border-top: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 0.75rem;
-        }
-
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        .table-hover tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
-        }
-
-        .form-control, .form-select {
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-        }
-
-        .btn {
-            border-radius: 0.5rem;
-            padding: 0.5rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-            .btn:hover {
-                transform: translateY(-2px);
-            }
-
-        .badge {
-            font-size: 0.75em;
-            padding: 0.5em 0.75em;
-        }
-
-        .alert {
-            border-radius: 0.75rem;
-            border: none;
-        }
-    </style>
 }
