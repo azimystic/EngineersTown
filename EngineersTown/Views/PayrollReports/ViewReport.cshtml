@@ -4,290 +4,379 @@
     ViewData["Title"] = $"Payroll Report - {Model.MonthName}";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">
-                        <i class="fas fa-file-invoice-dollar"></i> Payroll Report - @Model.MonthName
-                    </h3>
-                    <div class="btn-group">
-                        <a href="@Url.Action("Print", new { month = Model.Month, year = Model.Year })"
-                           class="btn btn-success" target="_blank">
-                            <i class="fas fa-print"></i> Print Report
-                        </a>
-                        <a href="@Url.Action("Index")" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Back to Reports
-                        </a>
-                    </div>
+<div class="min-h-screen bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Payroll Report - @Model.MonthName
+                    </h1>
                 </div>
-                <div class="card-body">
-                    <!-- Navigation Tabs -->
-                    <ul class="nav nav-tabs" id="reportTabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="regular-tab" data-bs-toggle="tab" href="#regular" role="tab">
-                                <i class="fas fa-user-tie"></i> Regular Employees (@Model.RegularEmployees.Sum(g => g.Count()))
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="contract-tab" data-bs-toggle="tab" href="#contract" role="tab">
-                                <i class="fas fa-handshake"></i> Contract Employees (@Model.ContractEmployees.Sum(g => g.Count()))
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="daily-tab" data-bs-toggle="tab" href="#daily" role="tab">
-                                <i class="fas fa-tools"></i> Daily Wage Employees (@Model.DailyWageEmployees.Sum(g => g.Count()))
-                            </a>
-                        </li>
-                    </ul>
+                <div class="flex flex-wrap gap-2">
+                    <a href="@Url.Action("Print", new { month = Model.Month, year = Model.Year })"
+                       class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors gap-2"
+                       target="_blank">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2z" />
+                        </svg>
+                        Print Report
+                    </a>
+                    <a href="@Url.Action("Index")"
+                       class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Reports
+                    </a>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Tab Content -->
-                    <div class="tab-content" id="reportTabsContent">
-                        <!-- Regular Employees Tab -->
-                        <div class="tab-pane fade show active" id="regular" role="tabpanel">
-                            @if (Model.RegularEmployees.Any())
-                            {
-                                <div class="table-responsive mt-3">
-                                    <table class="table table-bordered table-striped table-sm">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Employee Name</th>
-                                                <th>Designation</th>
-                                                <th>60 Yr Age</th>
-                                                <th>Basic Pay</th>
-                                                <th>House Rent</th>
-                                                <th>Conveyance</th>
-                                                <th>Medical</th>
-                                                <th>Gun</th>
-                                                <th>SPL</th>
-                                                <th>Wash</th>
-                                                <th>Adhoc</th>
-                                                <th>SRA</th>
-                                                <th>Gross Salary</th>
-                                                <th>EPF</th>
-                                                <th>Income Tax</th>
-                                                <th>EOBI</th>
-                                                <th>Other</th>
-                                                <th>Absent Days</th>
-                                                <th>Absent Deduction</th>
-                                                <th>Net Payable</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var departmentGroup in Model.RegularEmployees)
-                                            {
-                                                <tr class="table-info">
-                                                    <td colspan="20"><strong>@departmentGroup.Key</strong></td>
-                                                </tr>
-                                                @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
-                                                {
-                                                    <tr>
-                                                        <td>@employee.EmployeeName</td>
-                                                        <td>@employee.DesignationName</td>
-                                                        <td>@employee.YearsUntil60</td>
-                                                        <td>@employee.BasicSalary?.ToString("N2")</td>
-                                                        <td>@employee.HouseRentAllowance?.ToString("N2")</td>
-                                                        <td>@employee.ConveyanceAllowance?.ToString("N2")</td>
-                                                        <td>@employee.MedicalAllowance?.ToString("N2")</td>
-                                                        <td>@employee.GunAllowance?.ToString("N2")</td>
-                                                        <td>@employee.SupplementaryAllowance?.ToString("N2")</td>
-                                                        <td>@employee.WashAllowance?.ToString("N2")</td>
-                                                        <td>@employee.AdhocAllowance?.ToString("N2")</td>
-                                                        <td>@employee.SRAAllowance?.ToString("N2")</td>
-                                                        <td><strong>@employee.GrossSalary.ToString("N2")</strong></td>
-                                                        <td>@employee.EPFDeduction?.ToString("N2")</td>
-                                                        <td>@employee.IncomeTaxDeduction?.ToString("N2")</td>
-                                                        <td>@employee.EOBIDeduction?.ToString("N2")</td>
-                                                        <td>@employee.OtherDeductions?.ToString("N2")</td>
-                                                        <td>@employee.AbsentDays</td>
-                                                        <td>@employee.AbsentDeductions.ToString("N2")</td>
-                                                        <td><strong class="text-success">@employee.NetPayable.ToString("N2")</strong></td>
-                                                    </tr>
-                                                }
-                                                <tr class="table-secondary">
-                                                    <td colspan="13"><strong>Department Total</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.EPFDeduction ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
-                                                    <td><strong class="text-success">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</strong></td>
-                                                </tr>
-                                            }
-                                            <tr class="table-warning">
-                                                <td colspan="13"><strong>GRAND TOTAL - REGULAR EMPLOYEES</strong></td>
-                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.EPFDeduction ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</strong></td>
-                                                <td><strong>@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
-                                                <td><strong class="text-success">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="alert alert-info mt-3">No regular employees found for this period.</div>
-                            }
-                        </div>
+        <!-- Tabs Navigation -->
+        <div class="bg-white rounded-xl shadow-sm mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-8 px-6">
+                    <button type="button"
+                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center gap-2 transition-colors tab-button active"
+                            data-tab="regular">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Regular Employees (@Model.RegularEmployees.Sum(g => g.Count()))
+                    </button>
+                    <button type="button"
+                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center gap-2 transition-colors tab-button"
+                            data-tab="contract">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Contract Employees (@Model.ContractEmployees.Sum(g => g.Count()))
+                    </button>
+                    <button type="button"
+                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center gap-2 transition-colors tab-button"
+                            data-tab="daily">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Daily Wage Employees (@Model.DailyWageEmployees.Sum(g => g.Count()))
+                    </button>
+                </nav>
+            </div>
+        </div>
 
-                        <!-- Contract Employees Tab -->
-                        <div class="tab-pane fade" id="contract" role="tabpanel">
-                            @if (Model.ContractEmployees.Any())
-                            {
-                                <div class="table-responsive mt-3">
-                                    <table class="table table-bordered table-striped table-sm">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Employee Name</th>
-                                                <th>Expiry Date</th>
-                                                <th>Lump Sum</th>
-                                                <th>House Rent</th>
-                                                <th>Conveyance</th>
-                                                <th>Gun</th>
-                                                <th>Misc</th>
-                                                <th>Gross Salary</th>
-                                                <th>Income Tax</th>
-                                                <th>EOBI</th>
-                                                <th>Other</th>
-                                                <th>Present Days</th>
-                                                <th>Absent Deduction</th>
-                                                <th>Net Payable</th>
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Regular Employees Tab -->
+            <div class="tab-pane active" id="regular-tab">
+                @if (Model.RegularEmployees.Any())
+                {
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">60 Yr Age</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Basic Pay</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House Rent</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conveyance</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medical</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gun</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SPL</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wash</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adhoc</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SRA</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gross Salary</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EPF</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Income Tax</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EOBI</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Other</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Absent Days</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Absent Deduction</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Payable</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach (var departmentGroup in Model.RegularEmployees)
+                                    {
+                                        <tr class="bg-blue-50">
+                                            <td colspan="20" class="px-6 py-4 font-semibold text-blue-900">@departmentGroup.Key</td>
+                                        </tr>
+                                        @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                                        {
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.EmployeeName</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.DesignationName</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.YearsUntil60</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.BasicSalary?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.HouseRentAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.ConveyanceAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.MedicalAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.GunAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.SupplementaryAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.WashAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.AdhocAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.SRAAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">@employee.GrossSalary.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.EPFDeduction?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.IncomeTaxDeduction?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.EOBIDeduction?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.OtherDeductions?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.AbsentDays</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.AbsentDeductions.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">@employee.NetPayable.ToString("N2")</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var departmentGroup in Model.ContractEmployees)
-                                            {
-                                                <tr class="table-info">
-                                                    <td colspan="14"><strong>@departmentGroup.Key</strong></td>
-                                                </tr>
-                                                @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
-                                                {
-                                                    <tr>
-                                                        <td>@employee.EmployeeName</td>
-                                                        <td>@employee.ContractExpiryDate?.ToString("dd/MM/yyyy")</td>
-                                                        <td>@employee.LumpSumAmount?.ToString("N2")</td>
-                                                        <td>@employee.HouseRentAll?.ToString("N2")</td>
-                                                        <td>@employee.ConveyanceAll?.ToString("N2")</td>
-                                                        <td>@employee.GunAll?.ToString("N2")</td>
-                                                        <td>@employee.MiscAllowance?.ToString("N2")</td>
-                                                        <td><strong>@employee.GrossSalary.ToString("N2")</strong></td>
-                                                        <td>@employee.IncomeTaxDeduction?.ToString("N2")</td>
-                                                        <td>@employee.EOBIDeduction?.ToString("N2")</td>
-                                                        <td>@employee.OtherDeductions?.ToString("N2")</td>
-                                                        <td>@employee.PresentDays/@employee.TotalWorkingDays</td>
-                                                        <td>@employee.AbsentDeductions.ToString("N2")</td>
-                                                        <td><strong class="text-success">@employee.NetPayable.ToString("N2")</strong></td>
-                                                    </tr>
-                                                }
-                                                <tr class="table-secondary">
-                                                    <td colspan="8"><strong>Department Total</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
-                                                    <td></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
-                                                    <td><strong class="text-success">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</strong></td>
-                                                </tr>
-                                            }
-                                            <tr class="table-warning">
-                                                <td colspan="8"><strong>GRAND TOTAL - CONTRACT EMPLOYEES</strong></td>
-                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.OtherDeductions ?? 0).ToString("N2")</strong></td>
-                                                <td></td>
-                                                <td><strong>@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
-                                                <td><strong class="text-success">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="alert alert-info mt-3">No contract employees found for this period.</div>
-                            }
-                        </div>
-
-                        <!-- Daily Wage Employees Tab -->
-                        <div class="tab-pane fade" id="daily" role="tabpanel">
-                            @if (Model.DailyWageEmployees.Any())
-                            {
-                                <div class="table-responsive mt-3">
-                                    <table class="table table-bordered table-striped table-sm">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Employee Name</th>
-                                                <th>Daily Wage</th>
-                                                <th>Total Days</th>
-                                                <th>Total Amount</th>
-                                                <th>Arm Allowance</th>
-                                                <th>Mess Deduction</th>
-                                                <th>Present Days</th>
-                                                <th>Absent Days</th>
-                                                <th>Absent Deduction</th>
-                                                <th>Net Payable</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var departmentGroup in Model.DailyWageEmployees)
-                                            {
-                                                <tr class="table-info">
-                                                    <td colspan="10"><strong>@departmentGroup.Key</strong></td>
-                                                </tr>
-                                                @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
-                                                {
-                                                    <tr>
-                                                        <td>@employee.EmployeeName</td>
-                                                        <td>@employee.DailyWage?.ToString("N2")</td>
-                                                        <td>@DateTime.DaysInMonth(Model.Year, Model.Month)</td>
-                                                        <td>@employee.TotalDailyWages?.ToString("N2")</td>
-                                                        <td>@employee.GunAllowance?.ToString("N2")</td>
-                                                        <td>@employee.MessDeduction?.ToString("N2")</td>
-                                                        <td>@employee.PresentDays</td>
-                                                        <td>@employee.AbsentDays</td>
-                                                        <td>@employee.AbsentDeductions.ToString("N2")</td>
-                                                        <td><strong class="text-success">@employee.NetPayable.ToString("N2")</strong></td>
-                                                    </tr>
-                                                }
-                                                <tr class="table-secondary">
-                                                    <td colspan="4"><strong>Department Total</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.GunAllowance ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.MessDeduction ?? 0).ToString("N2")</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.PresentDays)</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
-                                                    <td><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
-                                                    <td><strong class="text-success">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</strong></td>
-                                                </tr>
-                                            }
-                                            <tr class="table-warning">
-                                                <td colspan="4"><strong>GRAND TOTAL - DAILY WAGE EMPLOYEES</strong></td>
-                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.GunAllowance ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.MessDeduction ?? 0).ToString("N2")</strong></td>
-                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.PresentDays)</strong></td>
-                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</strong></td>
-                                                <td><strong>@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</strong></td>
-                                                <td><strong class="text-success">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</strong></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="alert alert-info mt-3">No daily wage employees found for this period.</div>
-                            }
+                                        }
+                                        <tr class="bg-gray-100">
+                                            <td colspan="13" class="px-6 py-4 font-semibold text-gray-900">Department Total</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.EPFDeduction ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.AbsentDays)</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-green-600">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</td>
+                                        </tr>
+                                    }
+                                    <tr class="bg-yellow-100">
+                                        <td colspan="13" class="px-6 py-4 font-bold text-gray-900">GRAND TOTAL - REGULAR EMPLOYEES</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.EPFDeduction ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.OtherDeductions ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-green-600">@Model.RegularEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                        <svg class="w-12 h-12 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-blue-800 font-medium">No regular employees found for this period.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Contract Employees Tab -->
+            <div class="tab-pane hidden" id="contract-tab">
+                @if (Model.ContractEmployees.Any())
+                {
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lump Sum</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House Rent</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conveyance</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gun</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Misc</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gross Salary</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Income Tax</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EOBI</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Other</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Present Days</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Absent Deduction</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Payable</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach (var departmentGroup in Model.ContractEmployees)
+                                    {
+                                        <tr class="bg-blue-50">
+                                            <td colspan="14" class="px-6 py-4 font-semibold text-blue-900">@departmentGroup.Key</td>
+                                        </tr>
+                                        @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                                        {
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.EmployeeName</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.ContractExpiryDate?.ToString("dd/MM/yyyy")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.LumpSumAmount?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.HouseRentAll?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.ConveyanceAll?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.GunAll?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.MiscAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">@employee.GrossSalary.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.IncomeTaxDeduction?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.EOBIDeduction?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.OtherDeductions?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.PresentDays/@employee.TotalWorkingDays</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.AbsentDeductions.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">@employee.NetPayable.ToString("N2")</td>
+                                            </tr>
+                                        }
+                                        <tr class="bg-gray-100">
+                                            <td colspan="8" class="px-6 py-4 font-semibold text-gray-900">Department Total</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4"></td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-green-600">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</td>
+                                        </tr>
+                                    }
+                                    <tr class="bg-yellow-100">
+                                        <td colspan="8" class="px-6 py-4 font-bold text-gray-900">GRAND TOTAL - CONTRACT EMPLOYEES</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.EOBIDeduction ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.OtherDeductions ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4"></td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-green-600">@Model.ContractEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                        <svg class="w-12 h-12 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-blue-800 font-medium">No contract employees found for this period.</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Daily Wage Employees Tab -->
+            <div class="tab-pane hidden" id="daily-tab">
+                @if (Model.DailyWageEmployees.Any())
+                {
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Daily Wage</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Days</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arm Allowance</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mess Deduction</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Present Days</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Absent Days</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Absent Deduction</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Payable</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach (var departmentGroup in Model.DailyWageEmployees)
+                                    {
+                                        <tr class="bg-blue-50">
+                                            <td colspan="10" class="px-6 py-4 font-semibold text-blue-900">@departmentGroup.Key</td>
+                                        </tr>
+                                        @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                                        {
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.EmployeeName</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.DailyWage?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@DateTime.DaysInMonth(Model.Year, Model.Month)</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.TotalDailyWages?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.GunAllowance?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.MessDeduction?.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.PresentDays</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.AbsentDays</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@employee.AbsentDeductions.ToString("N2")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">@employee.NetPayable.ToString("N2")</td>
+                                            </tr>
+                                        }
+                                        <tr class="bg-gray-100">
+                                            <td colspan="4" class="px-6 py-4 font-semibold text-gray-900">Department Total</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.GunAllowance ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.MessDeduction ?? 0).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.PresentDays)</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.AbsentDays)</td>
+                                            <td class="px-6 py-4 font-semibold text-gray-900">@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N2")</td>
+                                            <td class="px-6 py-4 font-semibold text-green-600">@departmentGroup.Sum(e => e.NetPayable).ToString("N2")</td>
+                                        </tr>
+                                    }
+                                    <tr class="bg-yellow-100">
+                                        <td colspan="4" class="px-6 py-4 font-bold text-gray-900">GRAND TOTAL - DAILY WAGE EMPLOYEES</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.GunAllowance ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.MessDeduction ?? 0).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.PresentDays)</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDays)</td>
+                                        <td class="px-6 py-4 font-bold text-gray-900">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.AbsentDeductions).ToString("N2")</td>
+                                        <td class="px-6 py-4 font-bold text-green-600">@Model.DailyWageEmployees.SelectMany(g => g).Sum(e => e.NetPayable).ToString("N2")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                        <svg class="w-12 h-12 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-blue-800 font-medium">No daily wage employees found for this period.</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
 
- 
+<style>
+    .tab-button {
+        border-color: transparent;
+        color: #6b7280;
+    }
+
+    .tab-button:hover {
+        border-color: #d1d5db;
+        color: #374151;
+    }
+
+    .tab-button.active {
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+
+    .tab-pane {
+        display: none;
+    }
+
+    .tab-pane.active {
+        display: block;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+
+                // Update button states
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update pane visibility
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+    });
+</script>
