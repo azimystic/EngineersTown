@@ -2,155 +2,119 @@
 
 @if (Model.EmployeeType == "001")
 {
-    <h4>Regular Employee Salary Components</h4>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="BasicSalary" class="control-label"></label>
-                <input asp-for="BasicSalary" class="form-control" />
-                <span asp-validation-for="BasicSalary" class="text-danger"></span>
-            </div>
+    <h4 class="text-lg font-semibold text-gray-900 mb-4">Regular Employee Salary Components</h4>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div>
+            <label asp-for="BasicSalary" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="BasicSalary" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="BasicSalary" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="HouseRentAllowance" class="control-label"></label>
-                <input asp-for="HouseRentAllowance" class="form-control" />
-                <span asp-validation-for="HouseRentAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="HouseRentAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="HouseRentAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="HouseRentAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="ConveyanceAllowance" class="control-label"></label>
-                <input asp-for="ConveyanceAllowance" class="form-control" />
-                <span asp-validation-for="ConveyanceAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="ConveyanceAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="ConveyanceAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="ConveyanceAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="MedicalAllowance" class="control-label"></label>
-                <input asp-for="MedicalAllowance" class="form-control" />
-                <span asp-validation-for="MedicalAllowance" class="text-danger"></span>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div>
+            <label asp-for="MedicalAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="MedicalAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="MedicalAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="GunAllowance" class="control-label"></label>
-                <input asp-for="GunAllowance" class="form-control" />
-                <span asp-validation-for="GunAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="GunAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="GunAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="GunAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="SupplementaryAllowance" class="control-label"></label>
-                <input asp-for="SupplementaryAllowance" class="form-control" />
-                <span asp-validation-for="SupplementaryAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="SupplementaryAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="SupplementaryAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="SupplementaryAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="WashAllowance" class="control-label"></label>
-                <input asp-for="WashAllowance" class="form-control" />
-                <span asp-validation-for="WashAllowance" class="text-danger"></span>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+            <label asp-for="WashAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="WashAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="WashAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="AdhocAllowance" class="control-label"></label>
-                <input asp-for="AdhocAllowance" class="form-control" />
-                <span asp-validation-for="AdhocAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="AdhocAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="AdhocAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="AdhocAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="SRAAllowance" class="control-label"></label>
-                <input asp-for="SRAAllowance" class="form-control" />
-                <span asp-validation-for="SRAAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="SRAAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="SRAAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="SRAAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
     </div>
 }
 else if (Model.EmployeeType == "002")
 {
-    <h4>Contract Employee Salary Components</h4>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="LumpSumAmount" class="control-label"></label>
-                <input asp-for="LumpSumAmount" class="form-control" />
-                <span asp-validation-for="LumpSumAmount" class="text-danger"></span>
-            </div>
+    <h4 class="text-lg font-semibold text-gray-900 mb-4">Contract Employee Salary Components</h4>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div>
+            <label asp-for="LumpSumAmount" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="LumpSumAmount" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="LumpSumAmount" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="HouseRentAll" class="control-label"></label>
-                <input asp-for="HouseRentAll" class="form-control" />
-                <span asp-validation-for="HouseRentAll" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="HouseRentAll" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="HouseRentAll" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="HouseRentAll" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="ConveyanceAll" class="control-label"></label>
-                <input asp-for="ConveyanceAll" class="form-control" />
-                <span asp-validation-for="ConveyanceAll" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="ConveyanceAll" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="ConveyanceAll" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="ConveyanceAll" class="text-red-600 text-sm mt-1 block"></span>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="GunAll" class="control-label"></label>
-                <input asp-for="GunAll" class="form-control" />
-                <span asp-validation-for="GunAll" class="text-danger"></span>
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+            <label asp-for="GunAll" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="GunAll" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="GunAll" class="text-red-600 text-sm mt-1 block"></span>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="MiscAllowance" class="control-label"></label>
-                <input asp-for="MiscAllowance" class="form-control" />
-                <span asp-validation-for="MiscAllowance" class="text-danger"></span>
-            </div>
+        <div>
+            <label asp-for="MiscAllowance" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="MiscAllowance" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="MiscAllowance" class="text-red-600 text-sm mt-1 block"></span>
         </div>
     </div>
 }
 else if (Model.EmployeeType == "003")
 {
-    <h4>Daily Wages Employee Salary Components</h4>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="DailyWage" class="control-label"></label>
-                <input asp-for="DailyWage" class="form-control" />
-                <span asp-validation-for="DailyWage" class="text-danger"></span>
-            </div>
+    <h4 class="text-lg font-semibold text-gray-900 mb-4">Daily Wages Employee Salary Components</h4>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+            <label asp-for="DailyWage" class="block text-sm font-medium text-gray-700 mb-2"></label>
+            <input asp-for="DailyWage" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+            <span asp-validation-for="DailyWage" class="text-red-600 text-sm mt-1 block"></span>
         </div>
     </div>
 }
 
-<h4 class="mt-4">Deductions</h4>
-<div class="row">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="EOBIDeduction" class="control-label"></label>
-            <input asp-for="EOBIDeduction" class="form-control" />
-            <span asp-validation-for="EOBIDeduction" class="text-danger"></span>
-        </div>
+<h4 class="text-lg font-semibold text-gray-900 mb-4 mt-6">Deductions</h4>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+        <label asp-for="EOBIDeduction" class="block text-sm font-medium text-gray-700 mb-2"></label>
+        <input asp-for="EOBIDeduction" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+        <span asp-validation-for="EOBIDeduction" class="text-red-600 text-sm mt-1 block"></span>
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="MessDeduction" class="control-label"></label>
-            <input asp-for="MessDeduction" class="form-control" />
-            <span asp-validation-for="MessDeduction" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="MessDeduction" class="block text-sm font-medium text-gray-700 mb-2"></label>
+        <input asp-for="MessDeduction" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+        <span asp-validation-for="MessDeduction" class="text-red-600 text-sm mt-1 block"></span>
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label asp-for="OtherDeductions" class="control-label"></label>
-            <input asp-for="OtherDeductions" class="form-control" />
-            <span asp-validation-for="OtherDeductions" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="OtherDeductions" class="block text-sm font-medium text-gray-700 mb-2"></label>
+        <input asp-for="OtherDeductions" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" />
+        <span asp-validation-for="OtherDeductions" class="text-red-600 text-sm mt-1 block"></span>
     </div>
 </div>

@@ -4,118 +4,167 @@
     ViewData["Title"] = "Salary Definition Details";
 }
 
-<h1>Salary Definition Details</h1>
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-4 rounded-t-lg">
+            <h1 class="text-2xl font-semibold flex items-center">
+                <i class="fas fa-money-bill-wave mr-3"></i>
+                Salary Definition Details
+            </h1>
+        </div>
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Employee</dt>
-        <dd class="col-sm-10">@Model.EmployeeName</dd>
+        <div class="p-6">
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Employee Information</h4>
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Employee</dt>
+                        <dd class="mt-1 text-sm text-gray-900 font-semibold">@Model.EmployeeName</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Type</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.EmployeeType</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Department</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.DepartmentName</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Designation</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.DesignationName</dd>
+                    </div>
+                </dl>
+            </div>
 
-        <dt class="col-sm-2">Type</dt>
-        <dd class="col-sm-10">@Model.EmployeeType</dd>
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Salary Components</h4>
+                @if (Model.EmployeeType == "001")
+                {
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Basic Salary</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.BasicSalary?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">House Rent Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.HouseRentAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Conveyance Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.ConveyanceAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Medical Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.MedicalAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Gun Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.GunAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Supplementary Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.SupplementaryAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Wash Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.WashAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Adhoc Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.AdhocAllowance?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">SRA Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.SRAAllowance?.ToString("C")</dd>
+                        </div>
+                    </dl>
+                }
+                else if (Model.EmployeeType == "002")
+                {
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Lump Sum Amount</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.LumpSumAmount?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">House Rent (All)</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.HouseRentAll?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Conveyance (All)</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.ConveyanceAll?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Gun (All)</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.GunAll?.ToString("C")</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Misc Allowance</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.MiscAllowance?.ToString("C")</dd>
+                        </div>
+                    </dl>
+                }
+                else if (Model.EmployeeType == "003")
+                {
+                    <dl class="grid grid-cols-1 gap-4">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Daily Wage</dt>
+                            <dd class="mt-1 text-sm text-gray-900">@Model.DailyWage?.ToString("C")</dd>
+                        </div>
+                    </dl>
+                }
+            </div>
 
-        <dt class="col-sm-2">Department</dt>
-        <dd class="col-sm-10">@Model.DepartmentName</dd>
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4">Deductions</h4>
+                <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">EPF Deduction</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.EPFDeduction?.ToString("C")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Income Tax</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.IncomeTaxDeduction?.ToString("C")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">EOBI</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.EOBIDeduction?.ToString("C")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Mess Deduction</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.MessDeduction?.ToString("C")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Other Deductions</dt>
+                        <dd class="mt-1 text-sm text-gray-900">@Model.OtherDeductions?.ToString("C")</dd>
+                    </div>
+                </dl>
+            </div>
 
-        <dt class="col-sm-2">Designation</dt>
-        <dd class="col-sm-10">@Model.DesignationName</dd>
-    </dl>
+            <div class="bg-primary-50 border border-primary-200 rounded-lg p-6 mb-6">
+                <h4 class="text-lg font-semibold text-primary-900 mb-4">Summary</h4>
+                <dl class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <dt class="text-sm font-medium text-primary-600">Gross Salary</dt>
+                        <dd class="mt-1 text-lg font-bold text-primary-900">@Model.GrossSalary.ToString("C")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-primary-600">Total Deductions</dt>
+                        <dd class="mt-1 text-lg font-bold text-red-600">@Model.TotalDeductions.ToString("C")</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-primary-600">Net Salary</dt>
+                        <dd class="mt-1 text-lg font-bold text-green-600">@Model.NetSalary.ToString("C")</dd>
+                    </div>
+                </dl>
+            </div>
 
-    <h4 class="mt-4">Salary Components</h4>
-    <hr />
-
-    @if (Model.EmployeeType == "001")
-    {
-        <dl class="row">
-            <dt class="col-sm-3">Basic Salary</dt>
-            <dd class="col-sm-9">@Model.BasicSalary?.ToString("C")</dd>
-
-            <dt class="col-sm-3">House Rent Allowance</dt>
-            <dd class="col-sm-9">@Model.HouseRentAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Conveyance Allowance</dt>
-            <dd class="col-sm-9">@Model.ConveyanceAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Medical Allowance</dt>
-            <dd class="col-sm-9">@Model.MedicalAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Gun Allowance</dt>
-            <dd class="col-sm-9">@Model.GunAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Supplementary Allowance</dt>
-            <dd class="col-sm-9">@Model.SupplementaryAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Wash Allowance</dt>
-            <dd class="col-sm-9">@Model.WashAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Adhoc Allowance</dt>
-            <dd class="col-sm-9">@Model.AdhocAllowance?.ToString("C")</dd>
-
-            <dt class="col-sm-3">SRA Allowance</dt>
-            <dd class="col-sm-9">@Model.SRAAllowance?.ToString("C")</dd>
-        </dl>
-    }
-    else if (Model.EmployeeType == "002")
-    {
-        <dl class="row">
-            <dt class="col-sm-3">Lump Sum Amount</dt>
-            <dd class="col-sm-9">@Model.LumpSumAmount?.ToString("C")</dd>
-
-            <dt class="col-sm-3">House Rent (All)</dt>
-            <dd class="col-sm-9">@Model.HouseRentAll?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Conveyance (All)</dt>
-            <dd class="col-sm-9">@Model.ConveyanceAll?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Gun (All)</dt>
-            <dd class="col-sm-9">@Model.GunAll?.ToString("C")</dd>
-
-            <dt class="col-sm-3">Misc Allowance</dt>
-            <dd class="col-sm-9">@Model.MiscAllowance?.ToString("C")</dd>
-        </dl>
-    }
-    else if (Model.EmployeeType == "003")
-    {
-        <dl class="row">
-            <dt class="col-sm-3">Daily Wage</dt>
-            <dd class="col-sm-9">@Model.DailyWage?.ToString("C")</dd>
-        </dl>
-    }
-
-    <h4 class="mt-4">Deductions</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">EPF Deduction</dt>
-        <dd class="col-sm-9">@Model.EPFDeduction?.ToString("C")</dd>
-
-        <dt class="col-sm-3">Income Tax</dt>
-        <dd class="col-sm-9">@Model.IncomeTaxDeduction?.ToString("C")</dd>
-
-        <dt class="col-sm-3">EOBI</dt>
-        <dd class="col-sm-9">@Model.EOBIDeduction?.ToString("C")</dd>
-
-        <dt class="col-sm-3">Mess Deduction</dt>
-        <dd class="col-sm-9">@Model.MessDeduction?.ToString("C")</dd>
-
-        <dt class="col-sm-3">Other Deductions</dt>
-        <dd class="col-sm-9">@Model.OtherDeductions?.ToString("C")</dd>
-    </dl>
-
-    <h4 class="mt-4">Summary</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">Gross Salary</dt>
-        <dd class="col-sm-9">@Model.GrossSalary.ToString("C")</dd>
-
-        <dt class="col-sm-3">Total Deductions</dt>
-        <dd class="col-sm-9">@Model.TotalDeductions.ToString("C")</dd>
-
-        <dt class="col-sm-3">Net Salary</dt>
-        <dd class="col-sm-9">@Model.NetSalary.ToString("C")</dd>
-    </dl>
-</div>
-<div class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <div class="flex items-center space-x-4">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="px-4 py-2 bg-yellow-600 text-white font-medium rounded-md hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-colors duration-200">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </a>
+                <a asp-action="Index" class="px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200">Back to List</a>
+            </div>
+        </div>
+    </div>
 </div>

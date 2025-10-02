@@ -43,12 +43,13 @@ namespace EngineersTown.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProcessAttendance()
+        public async Task<IActionResult> ProcessAttendance(DateTime? date)
         {
             try
             {
-                await _attendanceService.ProcessAttendanceLogsAsync();
-                TempData["SuccessMessage"] = "Attendance processed successfully.";
+                var selectedDate = date ?? DateTime.Today;
+                await _attendanceService.ProcessAttendanceLogsAsync(selectedDate);
+                TempData["SuccessMessage"] = $"Attendance processed successfully for {selectedDate:yyyy-MM-dd}.";
             }
             catch (Exception ex)
             {
@@ -56,7 +57,7 @@ namespace EngineersTown.Controllers
                 TempData["ErrorMessage"] = "An error occurred while processing attendance.";
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { date });
         }
     }
 }
