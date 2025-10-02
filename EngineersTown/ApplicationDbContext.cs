@@ -158,7 +158,7 @@ namespace EngineersTown.Data
                     Id = i + 1,
                     DayOfWeek = dayOfWeek,
                     StartTime = new TimeSpan(9, 0, 0), // 9:00 AM
-                    EndTime = new TimeSpan(17, 0, 0),  // 5:00 PM
+                    EndTime = new TimeSpan(16, 0, 0),  // 5:00 PM
                     IsOffDay = isOffDay
                 });
             }
@@ -166,64 +166,6 @@ namespace EngineersTown.Data
             modelBuilder.Entity<OfficeTiming>().HasData(officeTimings);
         }
 
-        private void SeedSampleData(ModelBuilder modelBuilder)
-        {
-            // Seed Departments
-            modelBuilder.Entity<Department>().HasData(
-                new Department { Id = 1, Name = "Engineering" },
-                new Department { Id = 2, Name = "Human Resources" },
-                new Department { Id = 3, Name = "Finance" },
-                new Department { Id = 4, Name = "Operations" }
-            );
-
-            // Seed Designations
-            modelBuilder.Entity<Designation>().HasData(
-                new Designation { Id = 1, DepartmentId = 1, Name = "Software Engineer" },
-                new Designation { Id = 2, DepartmentId = 1, Name = "Senior Engineer" },
-                new Designation { Id = 3, DepartmentId = 1, Name = "Tech Lead" },
-                new Designation { Id = 4, DepartmentId = 2, Name = "HR Manager" },
-                new Designation { Id = 5, DepartmentId = 2, Name = "HR Executive" },
-                new Designation { Id = 6, DepartmentId = 3, Name = "Accountant" },
-                new Designation { Id = 7, DepartmentId = 4, Name = "Operations Manager" }
-            );
-
-            // Seed Sample Employees
-            modelBuilder.Entity<Employee>().HasData(
-                new Employee
-                {
-                    Id = 1,
-                    Name = "Ahmad Ali",
-                    ZkedID = "101",
-                    CNIC = "12345-1234567-1",
-                    DOB = new DateTime(1990, 5, 15),
-                    DepartmentId = 1,
-                    DesignationId = 1,
-                    Type = "001"
-                },
-                new Employee
-                {
-                    Id = 2,
-                    Name = "Sara Khan",
-                    ZkedID = "102",
-                    CNIC = "12345-1234567-2",
-                    DOB = new DateTime(1988, 8, 22),
-                    DepartmentId = 1,
-                    DesignationId = 2,
-                    Type = "001"
-                },
-                new Employee
-                {
-                    Id = 3,
-                    Name = "Hassan Sheikh",
-                    ZkedID = "103",
-                    CNIC = "12345-1234567-3",
-                    DOB = new DateTime(1992, 12, 10),
-                    DepartmentId = 2,
-                    DesignationId = 4,
-                    Type = "002",
-                    ContractExpiryDate = new DateTime(2025, 12, 31)
-                }
-            );
-        }
+       
     }
 }

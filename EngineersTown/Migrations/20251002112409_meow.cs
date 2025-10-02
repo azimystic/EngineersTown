@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EngineersTown.Migrations
 {
     /// <inheritdoc />
-    public partial class cc : Migration
+    public partial class meow : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,6 +90,7 @@ namespace EngineersTown.Migrations
                     ZkedID = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     CNIC = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HasLeft = table.Column<bool>(type: "bit", nullable: false),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
                     DesignationId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
@@ -260,52 +261,17 @@ namespace EngineersTown.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Departments",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Engineering" },
-                    { 2, "Human Resources" },
-                    { 3, "Finance" },
-                    { 4, "Operations" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "OfficeTimings",
                 columns: new[] { "Id", "DayOfWeek", "EndTime", "IsOffDay", "StartTime" },
                 values: new object[,]
                 {
-                    { 1, 0, new TimeSpan(0, 17, 0, 0, 0), true, new TimeSpan(0, 9, 0, 0, 0) },
-                    { 2, 1, new TimeSpan(0, 17, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
-                    { 3, 2, new TimeSpan(0, 17, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
-                    { 4, 3, new TimeSpan(0, 17, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
-                    { 5, 4, new TimeSpan(0, 17, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
-                    { 6, 5, new TimeSpan(0, 17, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
-                    { 7, 6, new TimeSpan(0, 17, 0, 0, 0), true, new TimeSpan(0, 9, 0, 0, 0) }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Designations",
-                columns: new[] { "Id", "DepartmentId", "Name" },
-                values: new object[,]
-                {
-                    { 1, 1, "Software Engineer" },
-                    { 2, 1, "Senior Engineer" },
-                    { 3, 1, "Tech Lead" },
-                    { 4, 2, "HR Manager" },
-                    { 5, 2, "HR Executive" },
-                    { 6, 3, "Accountant" },
-                    { 7, 4, "Operations Manager" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Employees",
-                columns: new[] { "Id", "CNIC", "ContractExpiryDate", "DOB", "DepartmentId", "DesignationId", "Name", "Type", "ZkedID" },
-                values: new object[,]
-                {
-                    { 1, "12345-1234567-1", null, new DateTime(1990, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1, "Ahmad Ali", "001", "101" },
-                    { 2, "12345-1234567-2", null, new DateTime(1988, 8, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 2, "Sara Khan", "001", "102" },
-                    { 3, "12345-1234567-3", new DateTime(2025, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1992, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 4, "Hassan Sheikh", "002", "103" }
+                    { 1, 0, new TimeSpan(0, 16, 0, 0, 0), true, new TimeSpan(0, 9, 0, 0, 0) },
+                    { 2, 1, new TimeSpan(0, 16, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
+                    { 3, 2, new TimeSpan(0, 16, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
+                    { 4, 3, new TimeSpan(0, 16, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
+                    { 5, 4, new TimeSpan(0, 16, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
+                    { 6, 5, new TimeSpan(0, 16, 0, 0, 0), false, new TimeSpan(0, 9, 0, 0, 0) },
+                    { 7, 6, new TimeSpan(0, 16, 0, 0, 0), true, new TimeSpan(0, 9, 0, 0, 0) }
                 });
 
             migrationBuilder.CreateIndex(

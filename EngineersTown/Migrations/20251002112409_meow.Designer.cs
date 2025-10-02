@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EngineersTown.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250902142418_cc")]
-    partial class cc
+    [Migration("20251002112409_meow")]
+    partial class meow
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -147,28 +147,6 @@ namespace EngineersTown.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Engineering"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Human Resources"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Finance"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Operations"
-                        });
                 });
 
             modelBuilder.Entity("EngineersTown.Models.Designation", b =>
@@ -192,50 +170,6 @@ namespace EngineersTown.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("Designations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DepartmentId = 1,
-                            Name = "Software Engineer"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DepartmentId = 1,
-                            Name = "Senior Engineer"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DepartmentId = 1,
-                            Name = "Tech Lead"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            DepartmentId = 2,
-                            Name = "HR Manager"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DepartmentId = 2,
-                            Name = "HR Executive"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            DepartmentId = 3,
-                            Name = "Accountant"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            DepartmentId = 4,
-                            Name = "Operations Manager"
-                        });
                 });
 
             modelBuilder.Entity("EngineersTown.Models.Employee", b =>
@@ -262,6 +196,9 @@ namespace EngineersTown.Migrations
 
                     b.Property<int>("DesignationId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("HasLeft")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -291,42 +228,6 @@ namespace EngineersTown.Migrations
                         .IsUnique();
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CNIC = "12345-1234567-1",
-                            DOB = new DateTime(1990, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            DesignationId = 1,
-                            Name = "Ahmad Ali",
-                            Type = "001",
-                            ZkedID = "101"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CNIC = "12345-1234567-2",
-                            DOB = new DateTime(1988, 8, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 1,
-                            DesignationId = 2,
-                            Name = "Sara Khan",
-                            Type = "001",
-                            ZkedID = "102"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CNIC = "12345-1234567-3",
-                            ContractExpiryDate = new DateTime(2025, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DOB = new DateTime(1992, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DepartmentId = 2,
-                            DesignationId = 4,
-                            Name = "Hassan Sheikh",
-                            Type = "002",
-                            ZkedID = "103"
-                        });
                 });
 
             modelBuilder.Entity("EngineersTown.Models.OfficeTiming", b =>
@@ -361,7 +262,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 1,
                             DayOfWeek = 0,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = true,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
@@ -369,7 +270,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 2,
                             DayOfWeek = 1,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = false,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
@@ -377,7 +278,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 3,
                             DayOfWeek = 2,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = false,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
@@ -385,7 +286,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 4,
                             DayOfWeek = 3,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = false,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
@@ -393,7 +294,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 5,
                             DayOfWeek = 4,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = false,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
@@ -401,7 +302,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 6,
                             DayOfWeek = 5,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = false,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         },
@@ -409,7 +310,7 @@ namespace EngineersTown.Migrations
                         {
                             Id = 7,
                             DayOfWeek = 6,
-                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
                             IsOffDay = true,
                             StartTime = new TimeSpan(0, 9, 0, 0, 0)
                         });
