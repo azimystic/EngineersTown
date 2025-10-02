@@ -30,13 +30,12 @@ namespace EngineersTown.Services
             _minimumWorkingHours = int.Parse(_configuration["AttendanceRules:MinimumWorkingHours"] ?? "7");
         }
 
-        public async Task ProcessAttendanceLogsAsync()
+        public async Task ProcessAttendanceLogsAsync(DateTime date)
         {
             try
             {
-                var today = DateTime.Today;
-                await ProcessDailyAttendanceAsync(today);
-                _logger.LogInformation("Processed daily attendance for {Date}", today);
+                await ProcessDailyAttendanceAsync(date);
+                _logger.LogInformation("Processed daily attendance for {Date}", date);
             }
             catch (Exception ex)
             {

@@ -91,7 +91,7 @@ namespace EngineersTown.Services
                     }
 
                     // Process daily attendance calculations
-                    await attendanceService.ProcessAttendanceLogsAsync();
+                    await attendanceService.ProcessAttendanceLogsAsync(DateTime.Today);
 
                     _logger.LogInformation("Successfully processed {Count} attendance punches", punches.Count);
                 }
