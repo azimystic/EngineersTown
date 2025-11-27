@@ -229,7 +229,7 @@ namespace EngineersTown.Services
             }
             else if (isLateArrival || isEarlyExit || noTimeOut)
             {
-                return "Late";
+                return "Present";
             }
             else
             {

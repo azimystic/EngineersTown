@@ -43,7 +43,7 @@ namespace EngineersTown.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,ZkedID,CNIC,DOB,DepartmentId,DesignationId,Type,ContractExpiryDate")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Name,ZkedID,CNIC,DOB,DepartmentId,DesignationId,Type,ContractExpiryDate,BPS")] Employee employee)
         {
             ModelState.Remove("Department");
             ModelState.Remove("Designation");
@@ -98,7 +98,7 @@ namespace EngineersTown.Controllers
         // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ZkedID,CNIC,DOB,DepartmentId,DesignationId,Type,ContractExpiryDate")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ZkedID,CNIC,DOB,DepartmentId,DesignationId,Type,ContractExpiryDate,BPS")] Employee employee)
         {
             if (id != employee.Id)
             {

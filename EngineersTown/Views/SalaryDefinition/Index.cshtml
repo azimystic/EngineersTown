@@ -12,9 +12,17 @@
                     <i class="fas fa-money-bill-wave mr-3"></i>
                     Salary Definitions
                 </h1>
-                <a asp-action="Create" class="px-4 py-2 bg-white text-primary-600 font-medium rounded-md hover:bg-gray-50 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600 transition-colors duration-200 flex items-center">
-                    <i class="fas fa-plus mr-2"></i> Create New
-                </a>
+                <div class="flex items-center space-x-3">
+                    <a asp-action="IncrementSalary" class="px-4 py-2 bg-emerald-500 text-white font-medium rounded-md hover:bg-emerald-600 focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-primary-600 transition-colors duration-200 flex items-center">
+                        <i class="fas fa-chart-line mr-2"></i> Increment Salary
+                    </a>
+                    <a asp-action="IncrementAdhoc" class="px-4 py-2 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-primary-600 transition-colors duration-200 flex items-center">
+                        <i class="fas fa-percentage mr-2"></i> Increment Adhoc
+                    </a>
+                    <a asp-action="Create" class="px-4 py-2 bg-white text-primary-600 font-medium rounded-md hover:bg-gray-50 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600 transition-colors duration-200 flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Create New
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -114,7 +122,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
+        $(document). ready(function() {
             // Initialize DataTable
             $('#salaryDefinitionsTable').DataTable({
                 "pageLength": 10,

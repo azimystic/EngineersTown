@@ -251,6 +251,19 @@
                                     @if (attendance.Status == "H")
                                     {
                                         <div title="@attendance.HolidayName">H</div>
+                                        @if (!string.IsNullOrEmpty(attendance.TimeIn) || !string.IsNullOrEmpty(attendance.TimeOut))
+                                        {
+                                            <div class="time-text">
+                                                @if (!string.IsNullOrEmpty(attendance.TimeIn))
+                                                {
+                                                    <div>@attendance.TimeIn</div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(attendance.TimeOut))
+                                                {
+                                                    <div>@attendance.TimeOut</div>
+                                                }
+                                            </div>
+                                        }
                                     }
                                     else if (attendance.Status == "OFF")
                                     {

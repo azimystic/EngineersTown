@@ -190,8 +190,15 @@
                         <th rowspan="2" style="width: 120px;">Employee Name</th>
                         <th rowspan="2" style="width: 80px;">Designation</th>
                         <th rowspan="2" style="width: 40px;">60 Yr Age</th>
+
                         <th colspan="9" style="background-color: #e8f5e8;">ALLOWANCES</th>
+
+                        <th rowspan="2" style="width: 60px; background-color: #f0f0f0;">GROSS</th>
+
                         <th colspan="4" style="background-color: #ffe8e8;">DEDUCTIONS</th>
+
+                        <th rowspan="2" style="width: 60px; background-color: #e6f3ff;">NET</th>
+
                         <th rowspan="2" style="width: 40px;">Absent Days</th>
                         <th rowspan="2" style="width: 60px;">Absent Deduction</th>
                         <th rowspan="2" style="width: 80px;">NET PAYABLE</th>
@@ -206,6 +213,7 @@
                         <th style="width: 40px;">Wash</th>
                         <th style="width: 40px;">Adhoc</th>
                         <th style="width: 40px;">SRA</th>
+
                         <th style="width: 50px;">EPF</th>
                         <th style="width: 50px;">I.Tax</th>
                         <th style="width: 40px;">EOBI</th>
@@ -215,10 +223,14 @@
                 <tbody>
                     @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
                     {
+                        var totalDeductions = (employee.EPFDeduction ?? 0) + (employee.IncomeTaxDeduction ?? 0) + (employee.EOBIDeduction ?? 0) + (employee.OtherDeductions ?? 0);
+                        var netPreAbsent = employee.GrossSalary - totalDeductions;
+
                         <tr>
                             <td class="employee-name">@employee.EmployeeName</td>
                             <td class="designation">@employee.DesignationName</td>
                             <td>@employee.YearsUntil60</td>
+
                             <td class="amount">@(employee.BasicSalary?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.HouseRentAllowance?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.ConveyanceAllowance?.ToString("N0") ?? "0")</td>
@@ -228,10 +240,16 @@
                             <td class="amount">@(employee.WashAllowance?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.AdhocAllowance?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.SRAAllowance?.ToString("N0") ?? "0")</td>
+
+                            <td class="amount" style="background-color: #fafafa; font-weight: bold;">@employee.GrossSalary.ToString("N0")</td>
+
                             <td class="amount">@(employee.EPFDeduction?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.IncomeTaxDeduction?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.EOBIDeduction?.ToString("N0") ?? "0")</td>
                             <td class="amount">@(employee.OtherDeductions?.ToString("N0") ?? "0")</td>
+
+                            <td class="amount" style="background-color: #f0f8ff; font-weight: bold; color: #0056b3;">@netPreAbsent.ToString("N0")</td>
+
                             <td>@employee.AbsentDays</td>
                             <td class="amount negative">@employee.AbsentDeductions.ToString("N0")</td>
                             <td class="amount positive"><strong>@employee.NetPayable.ToString("N0")</strong></td>
@@ -239,10 +257,20 @@
                     }
                     <tr class="department-total">
                         <td colspan="12"><strong>@departmentGroup.Key - TOTAL</strong></td>
+
+                        <td class="amount" style="background-color: #fafafa;"><strong>@departmentGroup.Sum(e => e.GrossSalary).ToString("N0")</strong></td>
+
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.EPFDeduction ?? 0).ToString("N0")</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.IncomeTaxDeduction ?? 0).ToString("N0")</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.EOBIDeduction ?? 0).ToString("N0")</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.OtherDeductions ?? 0).ToString("N0")</strong></td>
+
+                        <td class="amount" style="background-color: #f0f8ff; color: #0056b3;">
+                            <strong>
+                                @departmentGroup.Sum(e => e.GrossSalary - ((e.EPFDeduction ?? 0) + (e.IncomeTaxDeduction ?? 0) + (e.EOBIDeduction ?? 0) + (e.OtherDeductions ?? 0))).ToString("N0")
+                            </strong>
+                        </td>
+
                         <td><strong>@departmentGroup.Sum(e => e.AbsentDays)</strong></td>
                         <td class="amount"><strong>@departmentGroup.Sum(e => e.AbsentDeductions).ToString("N0")</strong></td>
                         <td class="amount positive"><strong>@departmentGroup.Sum(e => e.NetPayable).ToString("N0")</strong></td>

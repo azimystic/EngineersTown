@@ -35,6 +35,7 @@ namespace EngineersTown.Models
         public string Type { get; set; } = string.Empty; // 001 = Regular, 002 = Contract, 003 = Daily Wager
 
         public DateTime? ContractExpiryDate { get; set; }
+        public string? BPS { get; set; } 
 
         // Navigation properties
         [ForeignKey("DepartmentId")]

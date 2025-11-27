@@ -1,0 +1,195 @@
+﻿@model EngineersTown.Models.ViewModels.AdhocIncrementViewModel
+
+@{
+    ViewData["Title"] = "Increment Adhoc Allowance";
+}
+
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-4 rounded-t-lg">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-semibold flex items-center">
+                    <i class="fas fa-percentage mr-3"></i>
+                    Increment Adhoc Allowance
+                </h1>
+                <a asp-action="Index" class="px-4 py-2 bg-white text-amber-600 font-medium rounded-md hover:bg-gray-50 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-amber-600 transition-colors duration-200 flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to List
+                </a>
+            </div>
+        </div>
+
+        <div class="p-6">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="mb-4 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-red-800 flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <!-- Info Alert -->
+            <div class="mb-6 px-4 py-3 rounded-md bg-blue-50 border border-blue-200 text-blue-800 flex items-start">
+                <i class="fas fa-info-circle mr-3 mt-0.5"></i>
+                <div>
+                    <p class="font-medium">How it works:</p>
+                    <ul class="list-disc list-inside mt-1 text-sm">
+                        <li>Enter a percentage value (e.g., 10 for 10%)</li>
+                        <li>The percentage will be calculated on each employee's basic salary</li>
+                        <li>The calculated amount will be added to their current adhoc allowance</li>
+                        <li>This applies to all Regular (BPS) employees only</li>
+                    </ul>
+                </div>
+            </div>
+
+           
+
+            <!-- Percentage Input Form -->
+            <form asp-action="IncrementAdhoc" method="post" id="adhocForm">
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <div class="text-center mb-6">
+                        <label for="percentage" class="block text-lg font-medium text-gray-700 mb-2">
+                            Enter Percentage to Add to Adhoc
+                        </label>
+                        <p class="text-sm text-gray-500 mb-4">
+                            This percentage of each employee's basic salary will be added to their adhoc allowance
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-center space-x-4">
+                        <div class="relative w-48">
+                            <input type="number" 
+                                   name="percentage" 
+                                   id="percentage" 
+                                   step="0.01" 
+                                   min="0. 01" 
+                                   max="100" 
+                                   required
+                                   placeholder="Enter %"
+                                   class="block w-full pr-12 pl-4 py-3 text-center text-2xl font-bold border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                          
+                        </div>
+                    </div>
+
+                   
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 flex justify-center space-x-4">
+                       
+                        <button type="submit" 
+                                id="submitBtn"
+                                class="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-gray font-semibold rounded-md hover:from-amber-600 hover:to-amber-700 focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-200 flex items-center shadow-lg">
+                            <i class="fas fa-check-circle mr-2"></i> Apply Increment
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+           
+          
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-100">
+                <i class="fas fa-exclamation-triangle text-amber-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Confirm Adhoc Increment</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500" id="confirmMessage">Are you sure you want to apply this adhoc increment to all employees?</p>
+            </div>
+            <div class="flex justify-center space-x-4 px-4 py-3">
+                <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 text-gray-800 font-medium rounded-md hover:bg-gray-400 focus:ring-2 focus:ring-gray-300 transition-colors duration-200">
+                    Cancel
+                </button>
+                <button type="button" onclick="submitForm()" class="px-4 py-2 bg-amber-600 text-gray font-medium rounded-md hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 transition-colors duration-200">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const totalBasicSalary = @Model.TotalBasicSalary;
+        const currentTotalAdhoc = @Model.CurrentTotalAdhoc;
+
+        document.getElementById('adhocForm').addEventListener('submit', function(e) {
+            e. preventDefault();
+            const percentage = document.getElementById('percentage'). value;
+            if (percentage && percentage > 0 && percentage <= 100) {
+                document.getElementById('confirmMessage').textContent = 
+                    `Are you sure you want to add ${percentage}% of basic salary as adhoc allowance to all ${@Model.TotalEmployees} employees? `;
+                document. getElementById('confirmModal'). classList.remove('hidden');
+            }
+        });
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function submitForm() {
+            closeModal();
+            document.getElementById('adhocForm').submit();
+        }
+
+        function previewIncrement() {
+            const percentage = parseFloat(document.getElementById('percentage').value);
+            
+            if (! percentage || percentage <= 0 || percentage > 100) {
+                alert('Please enter a valid percentage between 0 and 100.');
+                return;
+            }
+
+            // Calculate preview locally
+            const totalAdhocToAdd = (totalBasicSalary * percentage) / 100;
+            const newTotalAdhoc = currentTotalAdhoc + totalAdhocToAdd;
+
+            document.getElementById('totalAdhocToAdd'). textContent = 'Rs. ' + totalAdhocToAdd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document. getElementById('newTotalAdhoc').textContent = 'Rs. ' + newTotalAdhoc. toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('previewSection').classList.remove('hidden');
+
+            // Fetch employee preview from server
+            fetch(`@Url.Action("PreviewAdhocIncrement")? percentage=${percentage}`)
+                .then(response => response. json())
+                . then(data => {
+                    if (data.success && data.preview && data.preview.length > 0) {
+                        const tbody = document.getElementById('previewTableBody');
+                        tbody. innerHTML = '';
+                        
+                        data.preview.forEach(emp => {
+                            const row = `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${emp.employeeName}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-900 text-right">Rs. ${emp. basicSalary. toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-900 text-right">Rs. ${emp.currentAdhoc.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                    <td class="px-4 py-3 text-sm text-amber-600 font-semibold text-right">+ Rs. ${emp.adhocIncrement.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                    <td class="px-4 py-3 text-sm text-emerald-600 font-semibold text-right">Rs.  ${emp.newAdhoc.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        });
+                        
+                        document.getElementById('employeePreviewSection'). classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching preview:', error);
+                });
+        }
+
+        // Auto-preview on input change
+        document. getElementById('percentage').addEventListener('input', function() {
+            const previewSection = document.getElementById('previewSection');
+            const employeePreviewSection = document.getElementById('employeePreviewSection');
+            if (! previewSection.classList.contains('hidden')) {
+                previewSection.classList.add('hidden');
+                employeePreviewSection.classList.add('hidden');
+            }
+        });
+    </script>
+}
