@@ -92,10 +92,11 @@ npm run build-css
 ```
 
 ### 6. Apply Database Migrations
-The application automatically applies migrations on startup. Alternatively, run manually:
+The application automatically applies migrations on startup (configured in `Program.cs`). To apply migrations manually instead:
 ```bash
 dotnet ef database update
 ```
+> **Note**: Automatic migrations are enabled for development convenience. For production deployments, consider disabling auto-migrations and applying them manually during deployment.
 
 ### 7. ZKTeco SDK Setup (Optional)
 If using ZKTeco biometric devices:
@@ -118,7 +119,7 @@ If using ZKTeco biometric devices:
 ```bash
 dotnet run
 ```
-The application will start and automatically open in your default browser at `http://localhost:5000`.
+The application will start and automatically open your default browser. By default, it runs on `http://localhost:5000`. The actual URL may vary based on your configuration in `Properties/launchSettings.json`.
 
 ## Configuration
 
