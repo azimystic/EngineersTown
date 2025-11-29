@@ -56,40 +56,50 @@
                     <i class="fas fa-filter mr-2 text-gray-600"></i>
                     Filters
                 </h2>
-                <form method="get" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+                <!-- GET form: date and department names must match controller action parameters -->
+                <form method="get" id="filterForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                        <!-- Use explicit Razor expression and correct formatting so value renders reliably -->
                         <input type="date"
                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
                                id="date"
                                name="date"
-                               value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+                               value="@(Model.SelectedDate.ToString("yyyy-MM-dd"))"
+                               onchange="submitFilterForm()" />
                     </div>
+
                     <div class="md:col-span-2">
                         <label for="departmentId" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" id="departmentId" name="departmentId">
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                id="departmentId"
+                                name="departmentId"
+                                onchange="submitFilterForm()">
                             @foreach (var dept in Model.Departments)
                             {
-                                <option value="@dept.Value" selected="@(dept.Value == Model.SelectedDepartmentId?.ToString())">
-                                    @dept.Text
-                                </option>
+                                // The C# if statement controls which version of the <option> tag is rendered
+                                if (dept.Value == Model.SelectedDepartmentId?.ToString())
+                                {
+                                    // Renders with the "selected" attribute
+                                    <option value="@dept.Value" selected>@dept.Text</option>
+                                }
+                                else
+                                {
+                                    // Renders without the "selected" attribute
+                                    <option value="@dept.Value">@dept.Text</option>
+                                }
                             }
                         </select>
                     </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">&nbsp;</label>
-                        <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center">
-                            <i class="fas fa-search mr-2"></i> Filter
+                        <button type="button"
+                                onclick="printAttendanceReport()"
+                                class="w-full px-4 py-2 bg-blue-600 text-gray font-medium rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center">
+                            <i class="fas fa-print mr-2"></i> Print Report
                         </button>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">&nbsp;</label>
-                        <form asp-action="ProcessAttendance" method="post" class="inline w-full" id="processAttendanceForm">
-                            <input type="hidden" name="date" id="processDate" />
-                            <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 flex items-center justify-center" onclick="return confirmProcess()">
-                                <i class="fas fa-sync mr-2"></i> Process
-                            </button>
-                        </form>
                     </div>
                 </form>
             </div>
@@ -207,15 +217,26 @@
 
 @section Scripts {
     <script>
-        function confirmProcess() {
-            var dateInput = document.getElementById('date');
-            var selectedDate = dateInput.value;
-            document.getElementById('processDate').value = selectedDate;
-            
-            var dateObj = new Date(selectedDate);
-            var formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            
-            return confirm('Process attendance for ' + formattedDate + '?');
+        // Submit filter form (GET) when date or department changes
+        function submitFilterForm() {
+            document.getElementById('filterForm').submit();
+        }
+
+        // Open print view in a new tab. If date input is empty for some reason fallback to Model.SelectedDate rendered server-side
+        function printAttendanceReport() {
+            var dateInput = document.getElementById('date').value;
+            // fallback to server-side selected date (rendered as yyyy-MM-dd)
+            if (!dateInput || dateInput.trim() === '') {
+                dateInput = '@Model.SelectedDate.ToString("yyyy-MM-dd")';
+            }
+            var departmentId = document.getElementById('departmentId').value;
+
+            var url = '@Url.Action("PrintAttendance", "Attendance")' + '?date=' + encodeURIComponent(dateInput);
+            if (departmentId) {
+                url += '&departmentId=' + encodeURIComponent(departmentId);
+            }
+
+            window.open(url, '_blank');
         }
 
         $(document).ready(function() {

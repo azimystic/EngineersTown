@@ -48,7 +48,7 @@ namespace EngineersTown.Migrations
 
                     b.HasIndex("EmployeeId", "LogTime");
 
-                    b.ToTable("AttendanceLogs");
+                    b.ToTable("AttendanceLogs", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.CalendarEvent", b =>
@@ -86,7 +86,7 @@ namespace EngineersTown.Migrations
 
                     b.HasIndex("Date", "IsCustomHoliday");
 
-                    b.ToTable("CalendarEvents");
+                    b.ToTable("CalendarEvents", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.DailyAttendance", b =>
@@ -125,7 +125,7 @@ namespace EngineersTown.Migrations
                     b.HasIndex("EmployeeId", "Date")
                         .IsUnique();
 
-                    b.ToTable("DailyAttendances");
+                    b.ToTable("DailyAttendances", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.Department", b =>
@@ -143,7 +143,7 @@ namespace EngineersTown.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.Designation", b =>
@@ -166,7 +166,7 @@ namespace EngineersTown.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Designations");
+                    b.ToTable("Designations", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.Employee", b =>
@@ -224,7 +224,7 @@ namespace EngineersTown.Migrations
                     b.HasIndex("ZkedID")
                         .IsUnique();
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.OfficeTiming", b =>
@@ -252,7 +252,7 @@ namespace EngineersTown.Migrations
                     b.HasIndex("DayOfWeek")
                         .IsUnique();
 
-                    b.ToTable("OfficeTimings");
+                    b.ToTable("OfficeTimings", (string)null);
 
                     b.HasData(
                         new
@@ -489,7 +489,7 @@ namespace EngineersTown.Migrations
                     b.HasIndex("EmployeeId", "Month", "Year")
                         .IsUnique();
 
-                    b.ToTable("PayrollReports");
+                    b.ToTable("PayrollReports", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.SalaryDefinition", b =>
@@ -573,7 +573,7 @@ namespace EngineersTown.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("SalaryDefinitions");
+                    b.ToTable("SalaryDefinitions", (string)null);
                 });
 
             modelBuilder.Entity("EngineersTown.Models.AttendanceLog", b =>

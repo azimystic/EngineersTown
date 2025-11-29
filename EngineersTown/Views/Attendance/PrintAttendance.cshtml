@@ -1,0 +1,333 @@
+﻿@model EngineersTown.Models.ViewModels.AttendanceViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance Report - @Model.SelectedDate.ToString("dd MMMM yyyy")</title>
+    <style>
+        @@page {
+            size: A4 portrait;
+            margin: 0.5in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            line-height: 1.2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
+        }
+
+            .header h1 {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+
+            .header h2 {
+                font-size: 14px;
+                color: #666;
+            }
+
+        .section-header {
+            background-color: #000;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .department-header {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-left: 4px solid #007bff;
+            margin-top: 15px;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 9px;
+        }
+
+            .attendance-table th,
+            .attendance-table td {
+                border: 1px solid #ccc;
+                padding: 4px 6px;
+                vertical-align: middle;
+            }
+
+            .attendance-table th {
+                background-color: #f8f9fa;
+                font-weight: bold;
+                text-align: center;
+            }
+
+            .attendance-table .employee-name {
+                text-align: left;
+                font-weight: bold;
+            }
+
+            .attendance-table .designation {
+                text-align: left;
+            }
+
+            .attendance-table .time-col {
+                text-align: center;
+                font-family: 'Courier New', monospace;
+            }
+
+            .attendance-table .status-col {
+                text-align: center;
+                font-weight: bold;
+                width: 40px;
+            }
+
+        . status-present {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-absent {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-late {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .department-total {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        .grand-total {
+            background-color: #fff3cd;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .summary-box {
+            float: right;
+            width: 200px;
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+        }
+
+            .summary-box h4 {
+                text-align: center;
+                margin-bottom: 10px;
+                font-size: 11px;
+            }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+
+            .summary-row:last-child {
+                border-bottom: 2px solid #000;
+                font-weight: bold;
+            }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        @@media print {
+            . no-print {
+                display: none;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+        }
+
+            .footer hr {
+                width: 50%;
+                margin: 15px auto;
+            }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="header">
+        <h1>ENGINEERS TOWN</h1>
+        <h2>Daily Attendance Report</h2>
+        <p style="font-size: 12px; margin-top: 5px;"><strong>@Model.SelectedDate.ToString("dddd, dd MMMM yyyy")</strong></p>
+        <p>Generated on: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="section-header">
+        ATTENDANCE SUMMARY - @Model.EmployeeAttendances.Count Employee(s)
+    </div>
+
+    <div style="display: flex; justify-content: space-around; margin: 15px 0; text-align: center;">
+        <div style="padding: 10px; border: 1px solid #28a745; background-color: #d4edda; min-width: 120px;">
+            <div style="font-size: 20px; font-weight: bold; color: #155724;">@Model.EmployeeAttendances.Count(e => e.Status == "Present" || e.Status == "Late")</div>
+            <div style="font-size: 10px; color: #155724;">Present</div>
+        </div>
+        <div style="padding: 10px; border: 1px solid #dc3545; background-color: #f8d7da; min-width: 120px;">
+            <div style="font-size: 20px; font-weight: bold; color: #721c24;">@Model.EmployeeAttendances.Count(e => e.Status == "Absent")</div>
+            <div style="font-size: 10px; color: #721c24;">Absent</div>
+        </div>
+      
+        <div style="padding: 10px; border: 1px solid #007bff; background-color: #cce5ff; min-width: 120px;">
+            <div style="font-size: 20px; font-weight: bold; color: #004085;">@Model.EmployeeAttendances.Count</div>
+            <div style="font-size: 10px; color: #004085;">Total</div>
+        </div>
+    </div>
+
+    @if (Model.EmployeeAttendances.Any())
+    {
+        var groupedByDepartment = Model.EmployeeAttendances
+        .GroupBy(e => e.DepartmentName ?? "Unassigned")
+        .OrderBy(g => g.Key);
+
+        @foreach (var departmentGroup in groupedByDepartment)
+        {
+            var deptPresent = departmentGroup.Count(e => e.Status == "Present" || e.Status == "Late");
+            var deptAbsent = departmentGroup.Count(e => e.Status == "Absent");
+
+            <div class="department-header">
+                @departmentGroup.Key Department - @departmentGroup.Count() Employee(s) | Present: @deptPresent | Absent: @deptAbsent
+            </div>
+
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;">Sr#</th>
+                        <th style="width: 150px;">Employee Name</th>
+                        <th style="width: 120px;">Designation</th>
+                        <th style="width: 50px;">Status</th>
+                        <th style="width: 70px;">Time In</th>
+                        <th style="width: 70px;">Time Out</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var srNo = 1;
+                    }
+                    @foreach (var employee in departmentGroup.OrderBy(e => e.EmployeeName))
+                    {
+                        var statusClass = employee.Status switch
+                        {
+                            "Present" => "status-present",
+                            "Absent" => "status-absent",
+                            "Late" => "status-late",
+                            _ => ""
+                        };
+
+                        var statusCode = employee.Status switch
+                        {
+                            "Present" => "P",
+                            "Absent" => "A",
+                            "Late" => "L",
+                            _ => "-"
+                        };
+
+                        <tr>
+                            <td style="text-align: center;">@srNo</td>
+                            <td class="employee-name">@employee.EmployeeName</td>
+                            <td class="designation">@employee.DesignationName</td>
+                            <td class="status-col @statusClass">@statusCode</td>
+                            <td class="time-col">@(employee.TimeIn ?? "-")</td>
+                            <td class="time-col">@(employee.TimeOut ?? "-")</td>
+                        </tr>
+                        srNo++;
+                    }
+                    <tr class="department-total">
+                        <td colspan="3" style="text-align: left;"><strong>@departmentGroup.Key - TOTAL</strong></td>
+                        <td style="text-align: center;"><strong>@departmentGroup.Count()</strong></td>
+                        <td colspan="2" style="text-align: center;">
+                            <span style="color: #155724;">P: @deptPresent</span> |
+                            <span style="color: #721c24;">A: @deptAbsent</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        <!-- Grand Summary Table -->
+        <div class="section-header" style="margin-top: 30px;">
+            GRAND SUMMARY
+        </div>
+
+        <table class="attendance-table" style="width: 60%; margin: 15px auto;">
+            <thead>
+                <tr>
+                    <th style="width: 150px;">Department</th>
+                    <th style="width: 60px;">Total</th>
+                    <th style="width: 60px;">Present</th>
+                    <th style="width: 60px;">Absent</th>
+                     
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var departmentGroup in groupedByDepartment)
+                {
+                    <tr>
+                        <td class="employee-name">@departmentGroup.Key</td>
+                        <td style="text-align: center;">@departmentGroup.Count()</td>
+                        <td style="text-align: center;" class="status-present">@departmentGroup.Count(e => e.Status == "Present")</td>
+                        <td style="text-align: center;" class="status-absent">@departmentGroup.Count(e => e.Status == "Absent")</td>
+                     </tr>
+                }
+                <tr class="grand-total">
+                    <td><strong>GRAND TOTAL</strong></td>
+                    <td style="text-align: center;"><strong>@Model.EmployeeAttendances.Count</strong></td>
+                    <td style="text-align: center;"><strong>@Model.EmployeeAttendances.Count(e => e.Status == "Present")</strong></td>
+                    <td style="text-align: center;"><strong>@Model.EmployeeAttendances.Count(e => e.Status == "Absent")</strong></td>
+                 </tr>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 50px; color: #666;">
+            <p style="font-size: 14px;">No attendance records found for this date.</p>
+        </div>
+    }
+
+    <div class="footer">
+        <hr />
+        <p>Generated by Engineers Town Attendance System</p>
+        <p>Report Date: @DateTime.Now.ToString("dd MMMM yyyy HH:mm")</p>
+        <p>This is a system generated report and does not require signature</p>
+    </div>
+</body>
+</html>

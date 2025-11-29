@@ -189,6 +189,7 @@
                     <tr>
                         <th rowspan="2" style="width: 120px;">Employee Name</th>
                         <th rowspan="2" style="width: 80px;">Designation</th>
+                        <th rowspan="2" style="width: 40px;">BPS</th>
                         <th rowspan="2" style="width: 40px;">60 Yr Age</th>
 
                         <th colspan="9" style="background-color: #e8f5e8;">ALLOWANCES</th>
@@ -229,6 +230,7 @@
                         <tr>
                             <td class="employee-name">@employee.EmployeeName</td>
                             <td class="designation">@employee.DesignationName</td>
+                            <td>@(string.IsNullOrEmpty(employee.BPS) ? "-" : employee.BPS)</td>
                             <td>@employee.YearsUntil60</td>
 
                             <td class="amount">@(employee.BasicSalary?.ToString("N0") ?? "0")</td>

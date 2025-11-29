@@ -37,7 +37,7 @@ namespace EngineersTown.Controllers
                     SelectedDepartmentId = departmentId
                 };
 
-                ViewBag.ErrorMessage = "An error occurred while loading attendance data.";
+                ViewBag.ErrorMessage = "An error occurred while loading attendance data. ";
                 return View(emptyViewModel);
             }
         }
@@ -49,7 +49,7 @@ namespace EngineersTown.Controllers
             {
                 var selectedDate = date ?? DateTime.Today;
                 await _attendanceService.ProcessAttendanceLogsAsync(selectedDate);
-                TempData["SuccessMessage"] = $"Attendance processed successfully for {selectedDate:yyyy-MM-dd}.";
+                TempData["SuccessMessage"] = $"Attendance processed successfully for {selectedDate:yyyy-MM-dd}. ";
             }
             catch (Exception ex)
             {
@@ -58,6 +58,33 @@ namespace EngineersTown.Controllers
             }
 
             return RedirectToAction("Index", new { date });
+        }
+
+        public async Task<IActionResult> PrintAttendance(DateTime? date, int? departmentId)
+        {
+            try
+            {
+                var selectedDate = date ?? DateTime.Today;
+
+                // Auto process attendance before printing
+                await _attendanceService.ProcessAttendanceLogsAsync(selectedDate);
+
+                var viewModel = await _attendanceService.GetAttendanceDataAsync(selectedDate, departmentId);
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating attendance print report");
+
+                var emptyViewModel = new AttendanceViewModel
+                {
+                    SelectedDate = date ?? DateTime.Today,
+                    SelectedDepartmentId = departmentId
+                };
+
+                return View(emptyViewModel);
+            }
         }
     }
 }

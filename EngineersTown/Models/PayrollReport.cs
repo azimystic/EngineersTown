@@ -24,6 +24,7 @@ namespace EngineersTown.Models
         [Required]
         [StringLength(20)]
         public string ZkedID { get; set; } = string.Empty;
+        public string? BPS { get; set; }
 
         [Required]
         [StringLength(3)]

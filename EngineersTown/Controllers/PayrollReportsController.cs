@@ -251,6 +251,7 @@ namespace EngineersTown.Controllers
                 DesignationName = employee.Designation.Name,
                 ContractExpiryDate = employee.ContractExpiryDate,
                 DOB = employee.DOB,
+                BPS = employee.BPS,
                 TotalWorkingDays = attendance.TotalWorkingDays,
                 PresentDays = attendance.PresentDays,
                 LateDays = attendance.LateDays,
